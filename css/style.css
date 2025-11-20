@@ -1,0 +1,59 @@
+/* navbar.php */
+.navbar-light .navbar-nav .nav-link {
+    font-size: 1.05rem;
+    margin-left: 18px;
+    color: #333 !important;   /* karena background putih */
+    transition: 0.3s;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: #555 !important;
+}
+
+.navbar-brand {
+    letter-spacing: 1px;
+}
+
+
+/* index.php */
+    #about .about-text {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        text-align: justify;
+    }
+
+
+    .about-img {
+    display: block;
+    border-radius: 15px;
+    width: 30rem;
+    height: auto;   
+    object-fit: cover;
+    margin-left: 50px;
+    }
+
+    .catalog-img {
+    display: block;
+    border-radius: 15px;
+    width: 10rem;
+    height: auto;   
+    object-fit: cover;
+    margin-top: 10px;
+    }
+
+    .dark-section {
+        background: linear-gradient(135deg, #1c1f24, #525a66 );
+        color: #f0f0f0;
+    }
+    
+
+/* footer */
+.footer-light {
+    background: #ffffff;
+    color: #000000;
+    border-top: 1px solid #e5e5e5; /* biar ada pemisah elegan */
+}
+
+.footer-light p {
+    margin-bottom: 6px;
+}
