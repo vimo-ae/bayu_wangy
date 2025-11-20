@@ -1,7 +1,7 @@
 <footer class="footer-light py-4">
     <div class="container text-center text-dark">
 
-        <h4 class="fw-bold mb-3" style="font-family: 'Bodoni Moda';">
+        <h4 class="fw-bold mb-3">
             Bayu Wangy
         </h4>
 
