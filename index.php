@@ -7,10 +7,8 @@
     <link rel="stylesheet" href="css/style.css">
     <title>Bayu Wangy - Perfume Shop</title>
     <style> 
-    @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap');
-
-
-</style>
+        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap');
+    </style>
 
 
 </head>
@@ -22,7 +20,7 @@
     <section id="about" class="dark-section">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-6 py-5 ">
+                <div class="col-md-6 py-5 text-center text-md-start">
                     <h1 class="text-light fw-bold mb-4">Selamat Datang di<br>Bayu Wangy</h1>
                     <p class="about-text mb-5">
                         Kami adalah toko parfum yang menyediakan berbagai jenis aroma premium,
@@ -32,7 +30,7 @@
                     </p>              
                     <a href="about.php" class="btn btn-light">Pelajari Selengkapnya</a>
                 </div>
-                <div class="col-md-6 text-center">
+                <div class="col-md-6 ">
                     <img src="images/home_about.png" class="img-fluid about-img">
                 </div>
             </div>
@@ -44,7 +42,7 @@
         <div class="container">
             <h2 class="text-dark mb-4 text-center">Katalog</h2>
             <div class="row g-4">
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                     <div class="card shadow-sm">
                         <img src="images/home_parfum.png" class="img-fluid align-self-center catalog-img" alt="Kategori 1">
                         <div class="card-body text-center">
@@ -53,7 +51,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                     <div class="card shadow-sm">
                         <img src="images/home_parfum.png" class="img-fluid align-self-center catalog-img" alt="Kategori 1">
                         <div class="card-body text-center">
@@ -62,7 +60,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                     <div class="card shadow-sm">
                         <img src="images/home_parfum.png" class="img-fluid align-self-center catalog-img" alt="Kategori 1">
                         <div class="card-body text-center">
@@ -85,7 +83,7 @@
             <div class="row g-4">
 
                 <!-- Item 1 -->
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="card h-100 shadow-sm">
                         <img src="images/home_parfum.png" class="img-fluid align-self-center catalog-img" alt="Kategori 1">
                         <div class="card-body">
@@ -97,7 +95,7 @@
                 </div>
 
                 <!-- Item 2 -->
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="card h-100 shadow-sm">
                         <img src="images/home_parfum.png" class="img-fluid align-self-center catalog-img" alt="Kategori 1">
                         <div class="card-body">
@@ -109,7 +107,7 @@
                 </div>
 
                 <!-- Item 3 -->
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="card h-100 shadow-sm">
                         <img src="images/home_parfum.png" class="img-fluid align-self-center catalog-img" alt="Kategori 1">
                         <div class="card-body">
@@ -121,7 +119,7 @@
                 </div>
 
                 <!-- Item 4 -->
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="card h-100 shadow-sm">
                         <img src="images/home_parfum.png" class="img-fluid align-self-center catalog-img" alt="Kategori 1">
                         <div class="card-body">

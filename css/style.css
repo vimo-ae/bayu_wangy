@@ -26,11 +26,14 @@
     .about-img {
     display: block;
     border-radius: 15px;
-    width: 30rem;
+    width: 27rem;
+    max-width: 100%;
     height: auto;   
     object-fit: cover;
     margin-left: 50px;
     }
+
+
 
     .catalog-img {
     display: block;
@@ -56,4 +59,23 @@
 
 .footer-light p {
     margin-bottom: 6px;
+}
+
+
+
+/* tambahan */
+
+/* Katolog image fix */
+.catalog-img {
+    max-width: 70%;
+}
+
+/* Jika layar kecil */
+@media (max-width: 767px) {
+    #about h1 {
+        font-size: 2rem;
+    }
+    #about p {
+        font-size: 1rem;
+    }
 }
