@@ -1,0 +1,183 @@
+body {
+    background: #0D0D0D;
+    font-family: Arial, sans-serif;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px 20px;
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+h1 {
+    margin-top: 0;
+    font-size: 32px;
+    color: #C5A159;
+    letter-spacing: 1px;
+}
+
+.image {
+    flex: 1 1 320px;
+    display: flex;
+    justify-content: center;
+}
+
+.image img {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.details {
+    flex: 2 1 400px;
+}
+
+.label {
+    color: #C5A159;
+    font-weight: bold;
+    margin-top: 28px;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.value {
+    margin-top: 6px;
+    font-size: 22px;
+}
+
+.description {
+    margin-top: 35px;
+    line-height: 1.7;
+    font-size: 17px;
+    opacity: 0.95;
+}
+
+.back-btn, .cart-btn {
+    position: fixed;
+    bottom: 20px;
+    border-radius: 12px;
+    padding: 12px 20px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 999;
+}
+
+.back-btn {
+    left: 20px;
+    background: #555;
+}
+
+.cart-btn {
+    right: 20px;
+    background: #c69a00;
+}
+
+.back-btn:hover {
+    background: #444;
+}
+
+.cart-btn:hover {
+    background: #a88300;
+}
+
+@media (max-width: 800px) {
+    .container {
+        padding: 25px;
+        gap: 30px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .value {
+        font-size: 20px;
+    }
+
+    .description {
+        font-size: 16px;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .details-section {
+        padding-top: 15px;
+    }
+
+    .image img {
+        max-width: 300px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+
+
+    .image {
+        width: 100%;
+        order: -1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .image img {
+        max-width: 260px;
+        margin: 0 auto;
+    }
+
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .label {
+        font-size: 12px;
+    }
+
+    .value {
+        font-size: 18px;
+    }
+
+    .description {
+        font-size: 14px;
+    }
+
+
+    .back-btn,
+    .cart-btn {
+        font-size: 14px;
+        padding: 10px 12px;
+        bottom: 15px;
+    }
+
+    .back-btn {
+        left: 10px;
+    }
+
+    .cart-btn {
+        right: 10px;
+    }
+
+    .container {
+        padding-bottom: 80px;
+    }
+}
