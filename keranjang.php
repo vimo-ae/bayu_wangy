@@ -111,7 +111,7 @@
                     </div>
 
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4">
-                        <a href="produk.php" class="btn btn-outline-dark mb-3 mb-md-0">
+                        <a href="katalog.php" class="btn btn-outline-dark mb-3 mb-md-0">
                             Lanjut Belanja
                         </a>
                         <button class="btn btn-dark" type="button">
