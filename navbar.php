@@ -2,7 +2,7 @@
     <div class="container">
 
         <!-- Logo / Brand -->
-        <a class="navbar-brand fw-bold" href="#" style="font-size: 1.6rem;">
+        <a class="navbar-brand fw-bold" href="#">
             Bayu Wangy
         </a>
 
@@ -16,7 +16,7 @@
             <ul class="navbar-nav ms-auto">
                 
                 <li class="nav-item">
-                    <a class="nav-link active" href="#about">Tentang</a>
+                    <a class="nav-link" href="#about">Tentang</a>
                 </li>
 
                 <li class="nav-item">
@@ -24,11 +24,11 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="produk.php">Produk Kami</a>
+                    <a class="nav-link" href="produk.php">Keranjang</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="contact.php">Kontak</a>
+                    <a class="nav-link" href="contact.php">Akun Saya</a>
                 </li>
 
             </ul>
