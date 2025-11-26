@@ -1,3 +1,20 @@
+<!-- CREATE TABLE products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price INT NOT NULL,
+    image VARCHAR(255) DEFAULT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE cart_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    session_id VARCHAR(255) NOT NULL,
+    product_id INT NOT NULL,
+    qty INT NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id)
+) ENGINE=InnoDB; -->
+
+
 <?php
 session_start();
 require 'conn.php';
