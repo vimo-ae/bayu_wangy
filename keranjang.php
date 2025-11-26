@@ -1,3 +1,4 @@
+<!-- hitamkan di css -->
 <!-- CREATE DATABASE bayu_wangy CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 CREATE TABLE products (
