@@ -1,9 +1,9 @@
-<footer class="footer-light py-4">
+<footer class="footer bg-light py-4">
     <div class="container text-dark">
 
         <!-- Brand di tengah -->
         <div class="text-center">
-            <a class="navbar-brand fw-bold" href="#">
+            <a class="navbar-brand fw-bold" href="index.php">
                 Bayu Wangy
             </a>
         </div>

@@ -2,7 +2,7 @@
     <div class="container">
 
         <!-- Logo / Brand -->
-        <a class="navbar-brand fw-bold" href="#">
+        <a class="navbar-brand fw-bold" href="index.php">
             Bayu Wangy
         </a>
 
@@ -24,11 +24,11 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="produk.php">Keranjang</a>
+                    <a class="nav-link" href="keranjang.php">Keranjang</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="contact.php">Akun Saya</a>
+                    <a class="nav-link" href="akun.html">Akun Saya</a>
                 </li>
 
             </ul>

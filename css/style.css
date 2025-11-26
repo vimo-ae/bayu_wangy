@@ -120,3 +120,86 @@
     }
 }
 
+<<<<<<< HEAD
+=======
+/* keranjang */
+.cart-section {
+    padding: 80px 0;
+    background-color: #ffffff;
+    min-height: 70vh;
+}
+
+.cart-empty {
+    min-height: 55vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #111111;
+    font-family: "Bodoni Moda", serif;
+}
+
+.cart-subtitle {
+    font-size: 1.05rem;
+    color: #666666;
+    margin-bottom: 2rem;
+}
+
+.cart-continue-btn {
+    padding: 0.9rem 2.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-radius: 999px;
+}
+
+.cart-table {
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.cart-table thead tr {
+    background-color: #f7f7f7;
+}
+
+.cart-table th {
+    font-weight: 600;
+    border-bottom-width: 1px;
+}
+
+.cart-table td {
+    vertical-align: middle;
+}
+
+.cart-item-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.cart-remove-btn {
+    font-size: 0.85rem;
+}
+
+@media (max-width: 767px) {
+    .cart-section {
+        padding-top: 60px;
+    }
+
+    .cart-title {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .cart-subtitle {
+        text-align: center;
+    }
+}
+>>>>>>> a91355dd96638ceb7270bb57f041196ecbe9dce0
