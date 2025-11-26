@@ -1,49 +1,6 @@
-<!-- hitamkan di css -->
-<!-- CREATE DATABASE bayu_wangy CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
-CREATE TABLE products (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  price INT NOT NULL,
-  image VARCHAR(255) DEFAULT NULL
-);
-
-CREATE TABLE cart_items (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  session_id VARCHAR(255) NOT NULL,
-  product_id INT NOT NULL,
-  qty INT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (product_id) REFERENCES products(id)
-); -->
-
 <?php
 session_start();
-
-$host = 'localhost';
-$db   = 'nama_database';
-$user = 'db_user';
-$pass = 'db_pass';
-$charset = 'utf8mb4';
-
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
-
-try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (Exception $e) {
-    if (isset($_GET['action']) || strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
-        header('Content-Type: application/json');
-        http_response_code(500);
-        echo json_encode(['error' => 'Database connection failed']);
-        exit;
-    } else {
-        die('Database connection failed. Sesuaikan kredensial di file ini.');
-    }
-}
+require 'conn.php';
 
 function get_json_input() {
     $raw = file_get_contents('php://input');
@@ -59,14 +16,17 @@ if ($action) {
 
     try {
         if ($action === 'get_cart') {
-            $sql = "SELECT c.id as cart_id, p.id as product_id, p.name, p.price, p.image, c.qty
+            $sql = "SELECT c.id AS cart_id, p.id AS product_id, p.name, p.price, p.image, c.qty
                     FROM cart_items c
                     JOIN products p ON c.product_id = p.id
-                    WHERE c.session_id = :sid
+                    WHERE c.session_id = ?
                     ORDER BY c.id";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute(['sid' => $session_id]);
-            $items = $stmt->fetchAll();
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 's', $session_id);
+            mysqli_stmt_execute($stmt);
+            $res = mysqli_stmt_get_result($stmt);
+            $items = [];
+            while ($row = mysqli_fetch_assoc($res)) $items[] = $row;
             echo json_encode(['items' => $items]);
             exit;
         }
@@ -80,16 +40,23 @@ if ($action) {
                 exit;
             }
 
-            $stmt = $pdo->prepare("SELECT id FROM cart_items WHERE session_id = :sid AND product_id = :pid");
-            $stmt->execute(['sid' => $session_id, 'pid' => $product_id]);
-            $existing = $stmt->fetch();
+            $sql = "SELECT id FROM cart_items WHERE session_id = ? AND product_id = ? LIMIT 1";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 'si', $session_id, $product_id);
+            mysqli_stmt_execute($stmt);
+            $res = mysqli_stmt_get_result($stmt);
+            $existing = mysqli_fetch_assoc($res);
 
             if ($existing) {
-                $pdo->prepare("UPDATE cart_items SET qty = qty + 1 WHERE id = :id")
-                    ->execute(['id' => $existing['id']]);
+                $sql2 = "UPDATE cart_items SET qty = qty + 1 WHERE id = ?";
+                $stmt2 = mysqli_prepare($conn, $sql2);
+                mysqli_stmt_bind_param($stmt2, 'i', $existing['id']);
+                mysqli_stmt_execute($stmt2);
             } else {
-                $pdo->prepare("INSERT INTO cart_items (session_id, product_id, qty) VALUES (:sid, :pid, 1)")
-                    ->execute(['sid' => $session_id, 'pid' => $product_id]);
+                $sql2 = "INSERT INTO cart_items (session_id, product_id, qty) VALUES (?, ?, 1)";
+                $stmt2 = mysqli_prepare($conn, $sql2);
+                mysqli_stmt_bind_param($stmt2, 'si', $session_id, $product_id);
+                mysqli_stmt_execute($stmt2);
             }
 
             echo json_encode(['success' => true]);
@@ -105,9 +72,10 @@ if ($action) {
                 echo json_encode(['error' => 'Invalid input']);
                 exit;
             }
-
-            $stmt = $pdo->prepare("UPDATE cart_items SET qty = :qty WHERE id = :id AND session_id = :sid");
-            $stmt->execute(['qty' => $qty, 'id' => $cart_id, 'sid' => $session_id]);
+            $sql = "UPDATE cart_items SET qty = ? WHERE id = ? AND session_id = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 'iis', $qty, $cart_id, $session_id);
+            mysqli_stmt_execute($stmt);
             echo json_encode(['success' => true]);
             exit;
         }
@@ -120,21 +88,25 @@ if ($action) {
                 echo json_encode(['error' => 'Invalid cart_id']);
                 exit;
             }
-
-            $stmt = $pdo->prepare("DELETE FROM cart_items WHERE id = :id AND session_id = :sid");
-            $stmt->execute(['id' => $cart_id, 'sid' => $session_id]);
+            $sql = "DELETE FROM cart_items WHERE id = ? AND session_id = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 'is', $cart_id, $session_id);
+            mysqli_stmt_execute($stmt);
             echo json_encode(['success' => true]);
             exit;
         }
 
         if ($action === 'checkout') {
-            $sql = "SELECT c.id as cart_id, p.id as product_id, p.price, c.qty
+            $sql = "SELECT p.price, c.qty
                     FROM cart_items c
                     JOIN products p ON c.product_id = p.id
-                    WHERE c.session_id = :sid";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute(['sid' => $session_id]);
-            $items = $stmt->fetchAll();
+                    WHERE c.session_id = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 's', $session_id);
+            mysqli_stmt_execute($stmt);
+            $res = mysqli_stmt_get_result($stmt);
+            $items = [];
+            while ($row = mysqli_fetch_assoc($res)) $items[] = $row;
 
             if (empty($items)) {
                 http_response_code(400);
@@ -147,8 +119,9 @@ if ($action) {
                 $total += ((int)$it['price']) * ((int)$it['qty']);
             }
 
-            $del = $pdo->prepare("DELETE FROM cart_items WHERE session_id = :sid");
-            $del->execute(['sid' => $session_id]);
+            $del = mysqli_prepare($conn, "DELETE FROM cart_items WHERE session_id = ?");
+            mysqli_stmt_bind_param($del, 's', $session_id);
+            mysqli_stmt_execute($del);
 
             echo json_encode(['success' => true, 'total' => $total]);
             exit;
