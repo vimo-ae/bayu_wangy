@@ -1,9 +1,35 @@
+<?php
+require 'conn.php';
+
+if (!isset($_GET['id'])) {
+    header("Location: index.php");
+    exit();
+}
+
+$id_produk_url = $_GET['id'];
+$query = "SELECT id_produk, nama_produk, merk, harga FROM produk WHERE id_produk = '$id_produk_url'";
+$result = mysqli_query($conn, $query);
+
+if (!$result || mysqli_num_rows($result) !== 1) {
+    header("Location: index.php");
+    exit();
+}
+
+$data_produk = mysqli_fetch_assoc($result);
+
+$id_produk = $data_produk['id_produk'];
+$nama_produk = $data_produk['nama_produk'];
+$merk = $data_produk['merk'];
+$harga = $data_produk['harga'];
+
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pesan - Xerjoff Erba Pura | Bayu Wangy</title>
+    <title>Pesan - <?php echo $data_produk['nama_produk']; ?> | Bayu Wangy</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/pesann.css"> 
@@ -34,9 +60,9 @@
 
         <div class="right-info">
             
-            <h1 class="product-title">Erba Pura</h1>
-            <p class="product-type brand-label">BRAND: Xerjoff</p>
-            <h2 class="price">Rp 4.000.000</h2>
+            <h1 class="product-title"><?php echo $data_produk['nama_produk']; ?></h1>
+            <p class="product-type brand-label">BRAND: <?php echo $data_produk['merk']; ?></p>
+            <h2 class="price">Rp <?php echo number_format($data_produk['harga'], 0, ',', '.'); ?></h2>
             
             <div class="description-text">
                  <p>Erba Pura adalah ekstrak parfum buah-buahan dan amber yang lembut, modern, dan sangat kuat. Aroma dibuka dengan jeruk Sisilia yang cerah, dipadukan dengan amber, musk, dan vanila yang menghangatkan.</p>
@@ -44,13 +70,14 @@
 
 
             <div class="quantity-box">
-                <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                <button class="qty-btn" onclick="changeQty(-1)">-</button>
                 <span id="qty">1</span>
                 <button class="qty-btn" onclick="changeQty(1)">+</button>
+                <input type="hidden" id="id_produk_input" value="<?php echo $id_produk; ?>">
             </div>
 
-            <button class="buy-btn">Lanjut ke Pembayaran</button>
-            <button class="cart-btn-secondary" onclick="window.location.href='keranjang.php'">Tambah ke Keranjang</button>
+            <button class="buy-btn" onclick="tambahKeKeranjang()">Tambah ke Keranjang</button>
+            <button class="cart-btn-secondary" onclick="window.location.href='katalog.php'">Kembali ke Katalog</button>
 
             <div class="accordion-info">
 
@@ -70,7 +97,7 @@
 
                 <div class="acc-item" onclick="toggleAcc(this)">
                     <h3>Shipping Information</h3><span class="plus">+</span>
-                    <p class="acc-content">Pengiriman 1–2 hari kerja (Pulau Jawa) dan 3–5 hari kerja (Luar Jawa). Kami menjamin produk dikemas dengan sangat aman.</p>
+                    <p class="acc-content">Pengiriman 1-2 hari kerja (Pulau Jawa) dan 3-5 hari kerja (Luar Jawa). Kami menjamin produk dikemas dengan sangat aman.</p>
                 </div>
             </div>
         </div>
@@ -78,6 +105,6 @@
 
     <?php include 'footer.php'; ?>
 
-    <script src="script/pesan.js"></script> 
+    <script src="script/pesannn.js"></script> 
 </body>
 </html>

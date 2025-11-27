@@ -4,19 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About & Testimoni - Bayu Wangy</title>
-    <link rel="stylesheet" href="css/about.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/abouttt.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <?php include 'navbar.php'; ?>
+
     <section class="story">
-        <div class="gold-line"></div>
+        <div class="signature">The Art of Fragrance</div>
         <p>
             Didirikan dengan semangat untuk menciptakan parfum yang bukan hanya wangi—tetapi juga pengalaman. Kami percaya bahwa setiap tetes parfum memiliki kekuatan untuk membangkitkan kenangan, meningkatkan percaya diri, dan menggambarkan kepribadian.
         </p>
         <p>
             Dengan bahan premium pilihan dan proses penyulingan yang penuh ketelitian, setiap parfum kami membawa kesan mewah, tahan lama, dan tak terlupakan.
         </p>
-        <div class="signature">The Art of Fragrance</div>
     </section>
 
     <section class="timeline">
@@ -33,6 +37,8 @@
             <p>Menjangkau pelanggan internasional yang mencari keunikan dan kemewahan.</p>
         </div>
     </section>
+
+    <div class="gold-line"></div>
 
     <section class="testimoni-section">
     <h2 class="judul-section">TESTIMONI</h2>
@@ -129,6 +135,8 @@
     </form>
 </div>
     </section>
+
+    <?php include 'footer.php'; ?>
 
     <script src="script/about.js"></script>
 </body>

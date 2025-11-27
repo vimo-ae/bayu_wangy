@@ -3,7 +3,6 @@ body {
     font-family: 'Poppins', sans-serif;
     background: #000;
     color: #f5f5f5;
-    padding: 40px;
 }
 
 .hero {
@@ -55,7 +54,7 @@ body {
     background: linear-gradient(90deg, #d4af37, #f7e1a0, #c9970c);
     color: transparent;
     -webkit-background-clip: text;
-    margin: 20px 0 30px 0;
+    margin: 50px 0px;
     letter-spacing: 15px;
     text-align: center;
     line-height: 1.1;
@@ -75,7 +74,7 @@ body {
 .gold-line {
     height: 3px;
     width: 120px;
-    margin: 20px auto 30px;
+    margin: 100px auto 30px auto;
     background: linear-gradient(90deg, transparent, #d4af37, transparent);
 }
 

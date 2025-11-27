@@ -1,20 +1,3 @@
-<!-- CREATE TABLE products (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    price INT NOT NULL,
-    image VARCHAR(255) DEFAULT NULL
-) ENGINE=InnoDB;
-
-CREATE TABLE cart_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    session_id VARCHAR(255) NOT NULL,
-    product_id INT NOT NULL,
-    qty INT NOT NULL DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (product_id) REFERENCES products(id)
-) ENGINE=InnoDB; -->
-
-
 <?php
 session_start();
 require 'conn.php';
@@ -29,17 +12,18 @@ function get_json_input() {
 $action = $_GET['action'] ?? null;
 if ($action) {
     header('Content-Type: application/json');
-    $session_id = session_id();
+    // PERBAIKAN 1: Ganti id_sesi() yang tidak dikenal menjadi session_id()
+    $id_sesi = session_id(); 
 
     try {
         if ($action === 'get_cart') {
-            $sql = "SELECT c.id AS cart_id, p.id AS product_id, p.name, p.price, p.image, c.qty
-                    FROM cart_items c
-                    JOIN products p ON c.product_id = p.id
-                    WHERE c.session_id = ?
-                    ORDER BY c.id";
+            $sql = "SELECT c.id AS id_keranjang, p.id AS id_produk, p.nama_produk AS name, p.harga AS price, p.image, c.jumlah AS qty
+                   FROM item_keranjang c
+                   JOIN produk p ON c.id_produk = p.id
+                   WHERE c.id_sesi = ?
+                   ORDER BY c.id";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 's', $session_id);
+            mysqli_stmt_bind_param($stmt, 's', $id_sesi);
             mysqli_stmt_execute($stmt);
             $res = mysqli_stmt_get_result($stmt);
             $items = [];
@@ -50,48 +34,60 @@ if ($action) {
 
         if ($action === 'add') {
             $input = get_json_input();
-            $product_id = isset($input['product_id']) ? (int)$input['product_id'] : 0;
-            if ($product_id <= 0) {
+            // PERHATIKAN: Variabel yang dikirim dari JS adalah 'id_produk' dan 'qty'
+            $id_produk = isset($input['id_produk']) ? (int)$input['id_produk'] : 0; 
+            $jumlah_input = isset($input['qty']) ? (int)$input['qty'] : 1;
+            
+            // Periksa jika qty yang dimasukkan valid
+            if ($jumlah_input <= 0) $jumlah_input = 1;
+
+            if ($id_produk <= 0) {
                 http_response_code(400);
-                echo json_encode(['error' => 'Invalid product_id']);
+                echo json_encode(['error' => 'Invalid id_produk']);
                 exit;
             }
 
-            $sql = "SELECT id FROM cart_items WHERE session_id = ? AND product_id = ? LIMIT 1";
+            // (Opsional tapi direkomendasikan: Pengecekan produk ada di DB)
+            // ...
+
+            $sql = "SELECT id FROM item_keranjang WHERE id_sesi = ? AND id_produk = ? LIMIT 1";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'si', $session_id, $product_id);
+            mysqli_stmt_bind_param($stmt, 'si', $id_sesi, $id_produk);
             mysqli_stmt_execute($stmt);
             $res = mysqli_stmt_get_result($stmt);
             $existing = mysqli_fetch_assoc($res);
 
             if ($existing) {
-                $sql2 = "UPDATE cart_items SET qty = qty + 1 WHERE id = ?";
+                // PERBAIKAN 2: UPDATE jumlah berdasarkan $jumlah_input
+                $sql2 = "UPDATE item_keranjang SET jumlah = jumlah + ? WHERE id = ?";
                 $stmt2 = mysqli_prepare($conn, $sql2);
-                mysqli_stmt_bind_param($stmt2, 'i', $existing['id']);
+                mysqli_stmt_bind_param($stmt2, 'ii', $jumlah_input, $existing['id']);
                 mysqli_stmt_execute($stmt2);
             } else {
-                $sql2 = "INSERT INTO cart_items (session_id, product_id, qty) VALUES (?, ?, 1)";
+                // PERBAIKAN 2: INSERT jumlah berdasarkan $jumlah_input
+                $sql2 = "INSERT INTO item_keranjang (id_sesi, id_produk, jumlah) VALUES (?, ?, ?)";
                 $stmt2 = mysqli_prepare($conn, $sql2);
-                mysqli_stmt_bind_param($stmt2, 'si', $session_id, $product_id);
+                mysqli_stmt_bind_param($stmt2, 'sii', $id_sesi, $id_produk, $jumlah_input);
                 mysqli_stmt_execute($stmt2);
             }
 
             echo json_encode(['success' => true]);
             exit;
         }
-
-        if ($action === 'update_qty') {
+        
+        // Action 'update_jumlah' sudah benar menggunakan 'jumlah'
+        if ($action === 'update_jumlah') {
             $input = get_json_input();
             $cart_id = isset($input['cart_id']) ? (int)$input['cart_id'] : 0;
-            $qty = isset($input['qty']) ? (int)$input['qty'] : 0;
-            if ($cart_id <= 0 || $qty <= 0) {
+            $jumlah = isset($input['jumlah']) ? (int)$input['jumlah'] : 0;
+            if ($cart_id <= 0 || $jumlah <= 0) {
                 http_response_code(400);
                 echo json_encode(['error' => 'Invalid input']);
                 exit;
             }
-            $sql = "UPDATE cart_items SET qty = ? WHERE id = ? AND session_id = ?";
+            $sql = "UPDATE item_keranjang SET jumlah = ? WHERE id = ? AND id_sesi = ?";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'iis', $qty, $cart_id, $session_id);
+            mysqli_stmt_bind_param($stmt, 'iis', $jumlah, $cart_id, $id_sesi);
             mysqli_stmt_execute($stmt);
             echo json_encode(['success' => true]);
             exit;
@@ -105,21 +101,22 @@ if ($action) {
                 echo json_encode(['error' => 'Invalid cart_id']);
                 exit;
             }
-            $sql = "DELETE FROM cart_items WHERE id = ? AND session_id = ?";
+            $sql = "DELETE FROM item_keranjang WHERE id = ? AND id_sesi = ?";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'is', $cart_id, $session_id);
+            mysqli_stmt_bind_param($stmt, 'is', $cart_id, $id_sesi);
             mysqli_stmt_execute($stmt);
             echo json_encode(['success' => true]);
             exit;
         }
 
         if ($action === 'checkout') {
-            $sql = "SELECT p.price, c.qty
-                    FROM cart_items c
-                    JOIN products p ON c.product_id = p.id
-                    WHERE c.session_id = ?";
+            // PERBAIKAN 3: Ganti nama tabel/kolom agar sesuai skema database Anda
+            $sql = "SELECT p.harga AS price, c.jumlah AS qty
+                    FROM item_keranjang c
+                    JOIN produk p ON c.id_produk = p.id
+                    WHERE c.id_sesi = ?";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 's', $session_id);
+            mysqli_stmt_bind_param($stmt, 's', $id_sesi);
             mysqli_stmt_execute($stmt);
             $res = mysqli_stmt_get_result($stmt);
             $items = [];
@@ -132,12 +129,13 @@ if ($action) {
             }
 
             $total = 0;
+            // Perhitungan ini sudah benar karena hasil SELECT di-alias menjadi 'price' dan 'qty'
             foreach ($items as $it) {
                 $total += ((int)$it['price']) * ((int)$it['qty']);
             }
 
-            $del = mysqli_prepare($conn, "DELETE FROM cart_items WHERE session_id = ?");
-            mysqli_stmt_bind_param($del, 's', $session_id);
+            $del = mysqli_prepare($conn, "DELETE FROM item_keranjang WHERE id_sesi = ?");
+            mysqli_stmt_bind_param($del, 's', $id_sesi);
             mysqli_stmt_execute($del);
 
             echo json_encode(['success' => true, 'total' => $total]);
@@ -153,6 +151,7 @@ if ($action) {
     exit;
 }
 ?>
+
 <!doctype html>
 <html lang="id">
 <head>
@@ -163,19 +162,18 @@ if ($action) {
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap');
         .cart-item-img { width:60px; height:60px; object-fit:cover; }
-        .cart-title { font-family: 'Bodoni Moda', serif; }
         .cart-empty { min-height:200px; align-items:center; justify-content:center; display:flex; flex-direction:column; }
     </style>
 </head>
 <body>
+    <?php include 'navbar.php'; ?>
 
-    <section id="cart" class="cart-section py-4">
+    <section id="cart" class="cart-section bg-dark py-4">
         <div class="container">
 
             <div id="cart-empty" class="cart-empty text-center" style="display:none;">
-                <h1 class="cart-title">Keranjang Anda</h1>
+                <h1 class="text-light cart-title">Keranjang Anda</h1>
                 <p class="cart-subtitle">Keranjang Anda saat ini kosong.</p>
                 <a href="produk.php" class="btn btn-dark cart-continue-btn">LANJUT BELANJA</a>
             </div>
@@ -208,8 +206,8 @@ if ($action) {
                     </div>
 
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4">
-                        <a href="katalog.php" class="btn btn-outline-dark mb-3 mb-md-0">Lanjut Belanja</a>
-                        <button id="btn-checkout" class="btn btn-dark" type="button">Checkout</button>
+                        <a href="katalog.php" class="btn btn-outline-light mb-3 mb-md-0">Lanjut Belanja</a>
+                        <button id="btn-checkout" class="btn btn-light" type="button">Checkout</button>
                     </div>
                 </div>
             </div>
@@ -217,158 +215,164 @@ if ($action) {
         </div>
     </section>
 
-    <script src="bootstrap/js/bootstrap.js"></script>
-    <script>
-    function formatRupiah(angka) {
-        return 'Rp' + angka.toLocaleString('id-ID');
+     <?php include 'footer.php'; ?>
+
+  <script src="bootstrap/js/bootstrap.js"></script>
+  <script>
+  function formatRupiah(angka) {
+    return 'Rp' + angka.toLocaleString('id-ID');
+  }
+
+  async function apiCall(action, method = 'GET', body = null) {
+    const url = '<?= basename($_SERVER['PHP_SELF']); ?>?action=' + encodeURIComponent(action);
+    const opts = { method, headers: {} };
+    if (body) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(body);
+    }
+    const res = await fetch(url, opts);
+    if (!res.ok) {
+      let txt = await res.text();
+      throw new Error(txt || 'Network error');
+    }
+    return res.json();
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+     .replace(/&/g, '&amp;')
+     .replace(/</g, '&lt;')
+     .replace(/>/g, '&gt;')
+     .replace(/"/g, '&quot;')
+     .replace(/'/g, '&#039;');
+  }
+
+  function renderCart(items) {
+    const tbody = document.getElementById('cart-body');
+    tbody.innerHTML = '';
+    if (!items.length) {
+      document.getElementById('cart-has-items').style.display = 'none';
+      document.getElementById('cart-empty').style.display = 'flex';
+      document.getElementById('cart-total').textContent = formatRupiah(0);
+      return;
+    } else {
+      document.getElementById('cart-has-items').style.display = 'block';
+      document.getElementById('cart-empty').style.display = 'none';
     }
 
-    async function apiCall(action, method = 'GET', body = null) {
-        const url = '<?= basename($_SERVER['PHP_SELF']); ?>?action=' + encodeURIComponent(action);
-        const opts = { method, headers: {} };
-        if (body) {
-            opts.headers['Content-Type'] = 'application/json';
-            opts.body = JSON.stringify(body);
-        }
-        const res = await fetch(url, opts);
-        if (!res.ok) {
-            let txt = await res.text();
-            throw new Error(txt || 'Network error');
-        }
-        return res.json();
-    }
+    let total = 0;
+    items.forEach(item => {
+      const price = parseInt(item.price) || 0;
+      const qty = parseInt(item.qty) || 0;
+      const subtotal = price * qty;
+      total += subtotal;
 
-    function escapeHtml(text) {
-        return String(text)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;');
-    }
+      const tr = document.createElement('tr');
+      tr.className = 'cart-item';
+      // PERHATIKAN: PHP mengembalikan id_keranjang, tapi JS menggunakan cart_id
+      tr.dataset.cartId = item.id_keranjang; 
 
-    function renderCart(items) {
-        const tbody = document.getElementById('cart-body');
-        tbody.innerHTML = '';
-        if (!items.length) {
-            document.getElementById('cart-has-items').style.display = 'none';
-            document.getElementById('cart-empty').style.display = 'flex';
-            document.getElementById('cart-total').textContent = formatRupiah(0);
-            return;
-        } else {
-            document.getElementById('cart-has-items').style.display = 'block';
-            document.getElementById('cart-empty').style.display = 'none';
-        }
+      tr.innerHTML = `
+        <td>
+          <div class="d-flex align-items-center">
+            <img src="${item.image ? escapeHtml(item.image) : 'images/home_parfum.png'}" class="cart-item-img me-3" alt="">
+            <div><div class="fw-semibold">${escapeHtml(item.name)}</div></div>
+          </div>
+        </td>
+        <td class="text-center">
+          <input type="number" class="form-control form-control-sm text-center cart-qty" value="${qty}" min="1" style="width:70px;">
+        </td>
+        <td class="text-end cart-price" data-price="${price}">${formatRupiah(price)}</td>
+        <td class="text-end cart-subtotal">${formatRupiah(subtotal)}</td>
+        <td class="text-center">
+          <button class="btn btn-sm btn-outline-danger btn-delete-item">Hapus</button>
+        </td>
+      `;
 
-        let total = 0;
-        items.forEach(item => {
-            const price = parseInt(item.price) || 0;
-            const qty = parseInt(item.qty) || 0;
-            const subtotal = price * qty;
-            total += subtotal;
-
-            const tr = document.createElement('tr');
-            tr.className = 'cart-item';
-            tr.dataset.cartId = item.cart_id;
-
-            tr.innerHTML = `
-                <td>
-                    <div class="d-flex align-items-center">
-                        <img src="${item.image ? escapeHtml(item.image) : 'images/home_parfum.png'}" class="cart-item-img me-3" alt="">
-                        <div><div class="fw-semibold">${escapeHtml(item.name)}</div></div>
-                    </div>
-                </td>
-                <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center cart-qty" value="${qty}" min="1" style="width:70px;">
-                </td>
-                <td class="text-end cart-price" data-price="${price}">${formatRupiah(price)}</td>
-                <td class="text-end cart-subtotal">${formatRupiah(subtotal)}</td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-outline-danger btn-delete-item">Hapus</button>
-                </td>
-            `;
-
-            tbody.appendChild(tr);
-        });
-
-        document.getElementById('cart-total').textContent = formatRupiah(total);
-
-        document.querySelectorAll('.cart-qty').forEach(input => {
-            input.addEventListener('change', async function () {
-                let val = parseInt(this.value) || 1;
-                if (val <= 0) val = 1;
-                this.value = val;
-                const row = this.closest('.cart-item');
-                const cartId = row.dataset.cartId;
-                try {
-                    await apiCall('update_qty', 'POST', { cart_id: cartId, qty: val });
-                    await loadCart();
-                } catch (e) {
-                    console.error(e);
-                    alert('Gagal update qty');
-                }
-            });
-        });
-
-        document.querySelectorAll('.btn-delete-item').forEach(btn => {
-            btn.addEventListener('click', async function () {
-                if (!confirm('Hapus item ini dari keranjang?')) return;
-                const row = this.closest('.cart-item');
-                const cartId = row.dataset.cartId;
-                try {
-                    await apiCall('delete', 'POST', { cart_id: cartId });
-                    await loadCart();
-                } catch (e) {
-                    console.error(e);
-                    alert('Gagal hapus item');
-                }
-            });
-        });
-    }
-
-    async function loadCart() {
-        try {
-            const res = await apiCall('get_cart');
-            renderCart(res.items || []);
-        } catch (e) {
-            console.error('loadCart error', e);
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        loadCart();
-
-        document.getElementById('btn-checkout').addEventListener('click', async function () {
-            if (!confirm('Lanjut ke checkout?')) return;
-            try {
-                const res = await apiCall('checkout', 'POST', {});
-                if (res.success) {
-                    alert('Checkout sukses. Total: ' + formatRupiah(res.total || 0));
-                    loadCart();
-                } else {
-                    alert('Checkout gagal: ' + (res.error || 'Unknown'));
-                }
-            } catch (e) {
-                console.error(e);
-                alert('Checkout error');
-            }
-        });
+      tbody.appendChild(tr);
     });
 
-    async function addToCart(productId) {
+    document.getElementById('cart-total').textContent = formatRupiah(total);
+
+    document.querySelectorAll('.cart-qty').forEach(input => {
+      input.addEventListener('change', async function () {
+        let val = parseInt(this.value) || 1;
+        if (val <= 0) val = 1;
+        this.value = val;
+        const row = this.closest('.cart-item');
+        const cartId = row.dataset.cartId;
         try {
-            const res = await apiCall('add', 'POST', { product_id: productId });
-            if (res.success) {
-                alert('Produk ditambahkan ke keranjang');
-                loadCart();
-            } else {
-                alert('Gagal menambah ke keranjang: ' + (res.error || 'Unknown'));
-            }
+                    // PERBAIKAN 1 & 2: Ganti action ke 'update_jumlah' dan key ke 'jumlah'
+          await apiCall('update_jumlah', 'POST', { cart_id: cartId, jumlah: val });
+          await loadCart();
         } catch (e) {
-            console.error(e);
-            alert('Error menambah ke keranjang');
+          console.error(e);
+          alert('Gagal update jumlah');
         }
+      });
+    });
+
+    document.querySelectorAll('.btn-delete-item').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        if (!confirm('Hapus item ini dari keranjang?')) return;
+        const row = this.closest('.cart-item');
+        const cartId = row.dataset.cartId;
+        try {
+          await apiCall('delete', 'POST', { cart_id: cartId });
+          await loadCart();
+        } catch (e) {
+          console.error(e);
+          alert('Gagal hapus item');
+        }
+      });
+    });
+  }
+
+  async function loadCart() {
+    try {
+      const res = await apiCall('get_cart');
+      renderCart(res.items || []);
+    } catch (e) {
+      console.error('loadCart error', e);
     }
-    </script>
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    loadCart();
+
+    document.getElementById('btn-checkout').addEventListener('click', async function () {
+      if (!confirm('Lanjut ke checkout?')) return;
+      try {
+        const res = await apiCall('checkout', 'POST', {});
+        if (res.success) {
+          alert('Checkout sukses. Total: ' + formatRupiah(res.total || 0));
+          loadCart();
+        } else {
+          alert('Checkout gagal: ' + (res.error || 'Unknown'));
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Checkout error');
+      }
+    });
+  });
+
+    // Tambahkan parameter qty agar fungsi ini lebih berguna
+  async function addToCart(productId, quantity = 1) { 
+    try {
+            // Mengirim {id_produk: X, qty: Y}
+      const res = await apiCall('add', 'POST', { id_produk: productId, qty: quantity });
+      if (res.success) {
+        alert('Produk ditambahkan ke keranjang');
+        loadCart();
+      } else {
+        alert('Gagal menambah ke keranjang: ' + (res.error || 'Unknown'));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error menambah ke keranjang');
+    }
+  }
+  </script>
 </body>
 </html>
