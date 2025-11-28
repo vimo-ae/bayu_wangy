@@ -1,0 +1,264 @@
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+
+
+.btn-custom1 {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    background-color: #D4AF37;
+    color: #000;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-custom1:hover {
+    background-color: #b5911b;
+}
+
+.btn-custom2 {
+    display: inline-block;
+    padding: 10px 40px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    background-color: transparent;      /* transparan */
+    color: #D4AF37;                      /* tulisan emas */
+    border: 2px solid #D4AF37;           /* outline emas */
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.1s ease-in-out;
+}
+
+.btn-custom2:hover {
+    background-color: #D4AF37;           /* hover jadi emas full */
+    color: #000;                          /* tulisan hitam */
+}
+
+.navbar-brand {
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 10px;
+    text-transform: uppercase;
+    font-size: 1.6rem;
+    color: #b5911b
+}
+
+.subtitle {
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 10px;
+    text-transform: uppercase;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* index.php */
+    .about-text {
+        font-size: 0.9rem;
+        line-height: 1.8;
+        text-align: justify;
+    }
+
+    .catalog-title {
+        font-weight: 600;
+    }
+
+    .catalog-text {
+        font-size: 0.9rem;
+        line-height: 1.8;
+        text-align: center;
+    }
+
+    .brand {
+        color: #b5911b;
+    }
+
+    .about-img {
+    display: block;
+    border-radius: 15px;
+    width: 27rem;
+    max-width: 100%;
+    height: auto;   
+    object-fit: cover;
+    margin-left: 50px;
+    }
+
+    .catalog-img {
+    display: block;
+    border-radius: 15px;
+    width: 15rem;
+    height: auto;   
+    object-fit: cover;
+    margin-top: 10px;
+    }
+
+    .dark-section {
+        background: linear-gradient(135deg, #0d0d0d, #1c1c1c );
+        color: #f0f0f0;
+    }
+    
+
+/* footer */
+.footer-light {
+    background: #ffffff;
+    color: #000000;
+    border-top: 1px solid #e5e5e5; /* biar ada pemisah elegan */
+}
+
+.footer-light p {
+    margin-bottom: 6px;
+}
+
+/* tambahan */
+
+/* Katolog image fix */
+.catalog-img {
+    max-width: 70%;
+}
+
+/* Jika layar kecil */
+@media (max-width: 767px) {
+    #about h1 {
+        font-size: 2rem;
+    }
+    #about p {
+        font-size: 1rem;
+    }
+}
+
+
+/* keranjang */
+.cart-section {
+    background-color: #0D0D0D;
+    min-height: 60vh;
+    margin: 0 auto;
+}
+
+.cart-empty {
+    min-height: 55vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #D4AF37;
+}
+
+.cart-subtitle {
+    font-size: 1.05rem;
+    color: #ffffff;
+    margin-bottom: 2rem;
+}
+
+.cart-continue-btn {
+    border-radius: 6px;
+    padding: 12px 50px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 999;
+    background: #D4AF37;
+    color: black;
+}
+
+.cart-continue-btn:hover {
+    background: #b5911b; 
+}
+
+.cart-back-btn {
+    border-radius: 6px;
+    padding: 12px 50px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 999;
+    background: none;
+    color: #D4AF37;
+    border: 1px solid #D4AF37; /* Tombol Sekunder Outline */
+}
+
+.cart-back-btn:hover {
+    background: #1a1a1a;
+    color: #D4AF37;
+    border-color: #b5911b;
+}
+
+.cart-table {
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #ffffff;
+    border: 1px solid #b5911b;
+}
+
+.cart-table thead tr {
+    background-color: #f7f7f7;
+}
+
+.cart-table th {
+    font-weight: 600;
+    border-bottom-width: 1px;
+    border-color: #b5911b;
+    padding-block: 10px;
+}
+
+.cart-table td {
+    vertical-align: middle;
+    border-color: #b5911b;
+}
+
+.cart-table td:nth-child(3), .cart-table td:nth-child(4) 
+{
+    text-align: center; 
+    vertical-align: middle; 
+}
+
+.cart-table th:first-child, tr td:first-child {
+    padding-left: 30px !important;
+}
+
+.cart-table td:nth-child(3) input[type="number"], .cart-table td:nth-child(3) .qty-control {
+    /* Memastikan elemen itu sendiri (misalnya input box) terpusat */
+    margin-left: auto;
+    margin-right: auto;
+    display: block; /* Penting agar margin auto berfungsi */
+    
+    /* Meratakan teks di dalam input box QTY */
+    text-align: center;
+}
+
+.cart-item-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #D4AF37;
+}
+
+.cart-remove-btn {
+    font-size: 0.85rem;
+}
+
+@media (max-width: 767px) {
+    .cart-section {
+        padding-top: 60px;
+    }
+
+    .cart-title {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .cart-subtitle {
+        text-align: center;
+    }
+}
+

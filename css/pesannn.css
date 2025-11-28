@@ -1,0 +1,273 @@
+body {
+    margin: 0;
+    background: #0D0D0D; /* Warna Latar Belakang Gelap */
+    color: #E8E8E8; /* Warna Teks Putih/Terang */
+    font-family: "Poppins", sans-serif;
+}
+
+.button-bar {
+    top: 100px; /* Jarak dari atas (di bawah navbar) */
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin-top: 30px;
+    padding: 0 20px; /* Padding di kiri dan kanan agar tombol tidak menempel ke tepi layar */
+    display: flex; /* Mengaktifkan Flexbox */
+    justify-content: space-between; /* 🌟 KUNCI UTAMA: memisahkan tombol ke ujung-ujung */
+    align-items: center;
+    z-index: 990; /* Pastikan di atas konten utama */
+}
+
+.back-btn, .detail-btn {
+    border-radius: 12px;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 999;
+}
+
+.back-btn {
+    background: #555;
+    color: white;
+}
+
+.detail-btn {
+    background: #D4AF37;
+    color: black;
+}
+
+.back-btn:hover {
+    background: #444;
+}
+
+.detail-btn:hover {
+    background: #b5911b;
+}
+
+/* --- Product Container (Layout Utama) --- */
+.product-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 50px 20px;
+    display: flex;
+    gap: 60px; /* Jarak antar kolom lebih besar */
+    align-items: flex-start;
+}
+
+/* --- Image Area (Sisi Kiri) --- */
+.image-area {
+    flex: 1 1 45%; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Wrapper Gambar Utama */
+.main-image-wrapper {
+    /* Atur ukuran wrapper, misalnya untuk rasio aspek 1:1 */
+    width: 100%;
+    max-width: 450px;
+    height: auto; /* Disesuaikan dengan konten */
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); /* Shadow halus diterapkan pada wrapper */
+    overflow: hidden; /* Pastikan gambar di dalamnya tidak melebihi wrapper */
+}
+
+.main-img {
+    /* Gambar di dalam wrapper diatur agar mengisi penuh */
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    /* Hilangkan border-radius dan shadow yang sebelumnya diterapkan di sini */
+    border-radius: 0;
+    box-shadow: none; 
+}
+
+
+/* --- Grid Gambar Kecil --- */
+.image-grid {
+    display: flex; /* Ubah ke flex agar lebih mudah diatur */
+    gap: 15px;
+    margin-top: 20px;
+    max-width: 450px; /* Batasi lebar grid sama dengan wrapper utama */
+}
+
+.image-grid img {
+    width: 80px; /* Ukuran gambar kecil */
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 1px solid #333; /* Border halus */
+    transition: 0.2s;
+}
+
+.image-grid img:hover {
+    border-color: #D4AF37; /* Efek hover emas */
+    transform: scale(1.05);
+}
+
+/* --- Right Info (Sisi Kanan - Detail dan Order) --- */
+.right-info {
+    flex: 1 1 45%;
+}
+
+.product-title {
+    font-size: 38px;
+    font-weight: 700;
+    color: #D4AF37; /* Emas/Gold */
+    margin-bottom: 5px;
+}
+
+.product-type {
+    color: #B2B2B2;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+}
+
+.price {
+    font-size: 34px;
+    margin: 15px 0 25px 0;
+    font-weight: 600;
+    color: white;
+}
+
+.description-text {
+    border-top: 1px solid #333;
+    padding-top: 20px;
+    margin-bottom: 30px;
+}
+
+
+/* --- Quantity Box --- */
+.quantity-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #333;
+}
+
+.qty-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #D4AF37; /* Border Emas */
+    background: none;
+    color: #D4AF37;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.qty-btn:hover {
+    background: #D4AF37;
+    color: #000;
+}
+
+#qty {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+/* --- Tombol Aksi --- */
+.buy-btn, .cart-btn-secondary {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+.buy-btn {
+    background: #D4AF37; /* Tombol Primer Emas */
+    color: #000;
+}
+
+.buy-btn:hover {
+    background: #b5911b;
+}
+
+.cart-btn-secondary {
+    background: none;
+    color: #D4AF37;
+    border: 1px solid #D4AF37; /* Tombol Sekunder Outline */
+}
+
+.cart-btn-secondary:hover {
+    background: #1a1a1a;
+    border-color: #b5911b;
+}
+
+
+/* --- Accordion (Detail Aroma/Info) --- */
+.accordion-info {
+    margin-top: 40px;
+}
+
+.acc-item {
+    border-bottom: 1px solid #333;
+    padding: 15px 0;
+    cursor: pointer;
+}
+
+.acc-item h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #E8E8E8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.plus {
+    font-size: 24px;
+    transition: transform 0.3s ease;
+}
+
+.acc-item.active .plus {
+    transform: rotate(45deg); /* Mengubah + menjadi X (atau diputar) saat aktif */
+}
+
+.acc-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    padding: 0 10px;
+    color: #B2B2B2;
+}
+
+.acc-item.active .acc-content {
+    max-height: 500px; /* Nilai besar agar konten terlihat */
+    padding-top: 15px;
+    padding-bottom: 5px;
+}
+
+/* --- Responsiveness --- */
+@media (max-width: 992px) {
+    .product-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .image-area, .right-info {
+        flex: 1 1 100%;
+        width: 100%;
+        max-width: 600px;
+    }
+    
+    .main-img {
+        max-width: 100%;
+    }
+}

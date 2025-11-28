@@ -1,34 +1,187 @@
-<!DOCTYPE html>
+<?php
+session_start();
+require 'conn.php';
+echo "";
+
+function get_json_input() {
+    $raw = file_get_contents('php://input');
+    if (!$raw) return [];
+    $data = json_decode($raw, true);
+    return is_array($data) ? $data : [];
+}
+
+$action = $_GET['action'] ?? null;
+if ($action) {
+    header('Content-Type: application/json');
+    // PERBAIKAN 1: Ganti id_sesi() yang tidak dikenal menjadi session_id()
+    $id_sesi = session_id(); 
+
+    try {
+        if ($action === 'get_cart') {
+            $sql = "SELECT c.id_keranjang AS id_keranjang, p.id_produk AS id_produk, p.nama_produk AS name, p.harga AS price, p.gambar_produk AS image, c.jumlah AS qty
+                   FROM item_keranjang c
+                   JOIN produk p ON c.id_produk = p.id_produk
+                   WHERE c.id_sesi = ?
+                   ORDER BY id_keranjang";
+
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 's', $id_sesi);
+            mysqli_stmt_execute($stmt);
+            $res = mysqli_stmt_get_result($stmt);
+            $items = [];
+            while ($row = mysqli_fetch_assoc($res)) $items[] = $row;
+            echo json_encode(['items' => $items]);
+            exit;
+        }
+
+        if ($action === 'add') {
+            $input = get_json_input();
+            // PERHATIKAN: Variabel yang dikirim dari JS adalah 'id_produk' dan 'qty'
+            $id_produk = isset($input['id_produk']) ? (int)$input['id_produk'] : 0; 
+            $jumlah_input = isset($input['qty']) ? (int)$input['qty'] : 1;
+            
+            // Periksa jika qty yang dimasukkan valid
+            if ($jumlah_input <= 0) $jumlah_input = 1;
+
+            if ($id_produk <= 0) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid id_produk']);
+                exit;
+            }
+
+            // (Opsional tapi direkomendasikan: Pengecekan produk ada di DB)
+            // ...
+
+            $sql = "SELECT id_keranjang FROM item_keranjang WHERE id_sesi = ? AND id_produk = ? LIMIT 1";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 'si', $id_sesi, $id_produk);
+            mysqli_stmt_execute($stmt);
+            $res = mysqli_stmt_get_result($stmt);
+            $existing = mysqli_fetch_assoc($res);
+
+            if ($existing) {
+                // PERBAIKAN 2: UPDATE jumlah berdasarkan $jumlah_input
+                $sql2 = "UPDATE item_keranjang SET jumlah = jumlah + ? WHERE id_keranjang = ?";
+                $stmt2 = mysqli_prepare($conn, $sql2);
+                mysqli_stmt_bind_param($stmt2, 'ii', $jumlah_input, $existing['id_keranjang']);
+                mysqli_stmt_execute($stmt2);
+            } else {
+                // PERBAIKAN 2: INSERT jumlah berdasarkan $jumlah_input
+                $sql2 = "INSERT INTO item_keranjang (id_sesi, id_produk, jumlah) VALUES (?, ?, ?)";
+                $stmt2 = mysqli_prepare($conn, $sql2);
+                mysqli_stmt_bind_param($stmt2, 'sii', $id_sesi, $id_produk, $jumlah_input);
+                mysqli_stmt_execute($stmt2);
+            }
+
+            echo json_encode(['success' => true]);
+            exit;
+        }
+        
+        // Action 'update_jumlah' sudah benar menggunakan 'jumlah'
+        if ($action === 'update_jumlah') {
+            $input = get_json_input();
+            $cart_id = isset($input['cart_id']) ? (int)$input['cart_id'] : 0;
+            $jumlah = isset($input['jumlah']) ? (int)$input['jumlah'] : 0;
+            if ($cart_id <= 0 || $jumlah <= 0) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid input']);
+                exit;
+            }
+            $sql = "UPDATE item_keranjang SET jumlah = ? WHERE id_keranjang = ? AND id_sesi = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 'iis', $jumlah, $cart_id, $id_sesi);
+            mysqli_stmt_execute($stmt);
+            echo json_encode(['success' => true]);
+            exit;
+        }
+
+        if ($action === 'delete') {
+            $input = get_json_input();
+            $cart_id = isset($input['cart_id']) ? (int)$input['cart_id'] : 0;
+            if ($cart_id <= 0) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid cart_id']);
+                exit;
+            }
+            $sql = "DELETE FROM item_keranjang WHERE id_keranjang = ? AND id_sesi = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 'is', $cart_id, $id_sesi);
+            mysqli_stmt_execute($stmt);
+            echo json_encode(['success' => true]);
+            exit;
+        }
+
+        if ($action === 'checkout') {
+            // PERBAIKAN 3: Ganti nama tabel/kolom agar sesuai skema database Anda
+            $sql = "SELECT p.harga AS price, c.jumlah AS qty
+                    FROM item_keranjang c
+                    JOIN produk p ON c.id_produk = p.id_produk
+                    WHERE c.id_sesi = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, 's', $id_sesi);
+            mysqli_stmt_execute($stmt);
+            $res = mysqli_stmt_get_result($stmt);
+            $items = [];
+            while ($row = mysqli_fetch_assoc($res)) $items[] = $row;
+
+            if (empty($items)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Cart kosong']);
+                exit;
+            }
+
+            $total = 0;
+            // Perhitungan ini sudah benar karena hasil SELECT di-alias menjadi 'price' dan 'qty'
+            foreach ($items as $it) {
+                $total += ((int)$it['price']) * ((int)$it['qty']);
+            }
+
+            $del = mysqli_prepare($conn, "DELETE FROM item_keranjang WHERE id_sesi = ?");
+            mysqli_stmt_bind_param($del, 's', $id_sesi);
+            mysqli_stmt_execute($del);
+
+            echo json_encode(['success' => true, 'total' => $total]);
+            exit;
+        }
+
+        http_response_code(400);
+        echo json_encode(['error' => 'Unknown action']);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Server error', 'message' => $e->getMessage()]);
+    }
+    exit;
+}
+?>
+
+<!doctype html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="css/style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Keranjang</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="css/styleee.css"> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap');
+        .cart-item-img { width:60px; height:60px; object-fit:cover; }
+        .cart-empty { min-height:200px; align-items:center; justify-content:center; display:flex; flex-direction:column; }
     </style>
 </head>
 <body>
-
     <?php include 'navbar.php'; ?>
 
-    <section id="cart" class="cart-section">
+    <section id="cart" class="cart-section py-4">
         <div class="container">
 
-            <!-- Keranjang Kosong -->
             <div id="cart-empty" class="cart-empty text-center" style="display:none;">
                 <h1 class="cart-title">Keranjang Anda</h1>
                 <p class="cart-subtitle">Keranjang Anda saat ini kosong.</p>
-                <a href="produk.php" class="btn btn-dark cart-continue-btn">
-                    LANJUT BELANJA
-                </a>
+                <a href="katalog.php" class="btn cart-continue-btn">Lanjut Belanja</a>
             </div>
 
-            <!-- Keranjang ada barang -->
             <div id="cart-has-items" class="row justify-content-center">
-                <div class="col-12 col-lg-10">
+                <div class="col-12 col-lg-12">
                     <h1 class="cart-title mb-4 text-center text-md-start">Keranjang Anda</h1>
 
                     <div class="table-responsive">
@@ -37,72 +190,17 @@
                                 <tr>
                                     <th scope="col">Produk</th>
                                     <th scope="col" class="text-center">Qty</th>
-                                    <th scope="col" class="text-end">Harga</th>
-                                    <th scope="col" class="text-end">Subtotal</th>
+                                    <th scope="col" class="text-center">Harga</th>
+                                    <th scope="col" class="text-center">Subtotal</th>
                                     <th scope="col" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
-
-                                <tr class="cart-item">
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="images/home_parfum.png"
-                                                 class="cart-item-img me-3" alt="">
-                                            <div>
-                                                <div class="fw-semibold">Aroma Elegance</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <input type="number" class="form-control form-control-sm text-center cart-qty"
-                                               value="1" min="1" style="width:70px;">
-                                    </td>
-                                    <td class="text-end cart-price" data-price="120000">
-                                        Rp120.000
-                                    </td>
-                                    <td class="text-end cart-subtotal">
-                                        Rp120.000
-                                    </td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-outline-danger btn-delete-item">
-                                            Hapus
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr class="cart-item">
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="images/home_parfum.png"
-                                                 class="cart-item-img me-3" alt="">
-                                            <div>
-                                                <div class="fw-semibold">Fresh Breeze</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <input type="number" class="form-control form-control-sm text-center cart-qty"
-                                               value="2" min="1" style="width:70px;">
-                                    </td>
-                                    <td class="text-end cart-price" data-price="110000">
-                                        Rp110.000
-                                    </td>
-                                    <td class="text-end cart-subtotal">
-                                        Rp220.000
-                                    </td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-outline-danger btn-delete-item">
-                                            Hapus
-                                        </button>
-                                    </td>
-                                </tr>
-
+                            <tbody id="cart-body">
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th colspan="3" class="text-end">Total</th>
-                                    <th class="text-end" id="cart-total">Rp340.000</th>
+                                    <th colspan="3" class="text-center">Total</th>
+                                    <th class="text-center" id="cart-total">Rp0</th>
                                     <th></th>
                                 </tr>
                             </tfoot>
@@ -110,12 +208,8 @@
                     </div>
 
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4">
-                        <a href="produk.php" class="btn btn-outline-dark mb-3 mb-md-0">
-                            Lanjut Belanja
-                        </a>
-                        <button class="btn btn-dark" type="button">
-                            Checkout
-                        </button>
+                        <a href="katalog.php" class="btn cart-back-btn mb-3 mb-md-0">Lanjut Belanja</a>
+                        <button id="btn-checkout" class="btn cart-continue-btn" type="button">Checkout</button>
                     </div>
                 </div>
             </div>
@@ -123,64 +217,171 @@
         </div>
     </section>
 
-    <?php include 'footer.php'; ?>
+     <?php include 'footer.php'; ?>
 
-    <script src="bootstrap/js/bootstrap.js"></script>
+  <script src="bootstrap/js/bootstrap.js"></script>
+  <script>
+  function formatRupiah(angka) {
+    return 'Rp' + angka.toLocaleString('id-ID');
+  }
 
-    <script>
-        function formatRupiah(angka) {
-            return 'Rp' + angka.toLocaleString('id-ID');
+  async function apiCall(action, method = 'GET', body = null) {
+    const url = '<?= basename($_SERVER['PHP_SELF']); ?>?action=' + encodeURIComponent(action);
+    const opts = { method, headers: {} };
+    if (body) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(body);
+    }
+    const res = await fetch(url, opts);
+    if (!res.ok) {
+      let txt = await res.text();
+      throw new Error(txt || 'Network error');
+    }
+    return res.json();
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+     .replace(/&/g, '&amp;')
+     .replace(/</g, '&lt;')
+     .replace(/>/g, '&gt;')
+     .replace(/"/g, '&quot;')
+     .replace(/'/g, '&#039;');
+  }
+
+  function renderCart(items) {
+    const tbody = document.getElementById('cart-body');
+    tbody.innerHTML = '';
+    if (!items.length) {
+      document.getElementById('cart-has-items').style.display = 'none';
+      document.getElementById('cart-empty').style.display = 'flex';
+      document.getElementById('cart-total').textContent = formatRupiah(0);
+      return;
+    } else {
+      document.getElementById('cart-has-items').style.display = 'block';
+      document.getElementById('cart-empty').style.display = 'none';
+    }
+
+    let total = 0;
+    items.forEach(item => {
+     console.log("Produk:", item.name);
+     console.log("Path Gambar Diterima:", item.image);
+
+      const price = parseInt(item.price) || 0;
+      const qty = parseInt(item.qty) || 0;
+      const subtotal = price * qty;
+      total += subtotal;
+
+      const tr = document.createElement('tr');
+      tr.className = 'cart-item';
+      // PERHATIKAN: PHP mengembalikan id_keranjang, tapi JS menggunakan cart_id
+      tr.dataset.cartId = item.id_keranjang; 
+
+tr.innerHTML = `
+        <td>
+          <div class="d-flex align-items-center">
+            <img src="${item.image ? escapeHtml(item.image) : 'images/home_parfum.png'}" class="cart-item-img me-3" alt="">
+            <div><div class="fw-semibold">${escapeHtml(item.name)}</div></div>
+          </div>
+        </td>
+        
+        <td class="text-center">
+          <input type="number" class="form-control form-control-sm text-center cart-qty" value="${qty}" min="1" style="width:70px; margin: 0 auto;">
+        </td>
+        
+        <td class="text-center cart-price" data-price="${price}">${formatRupiah(price)}</td>
+        
+        <td class="text-center cart-subtotal">${formatRupiah(subtotal)}</td>
+        
+        <td class="text-center">
+          <button class="btn btn-sm btn-outline-danger btn-delete-item">Hapus</button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('cart-total').textContent = formatRupiah(total);
+
+    document.querySelectorAll('.cart-qty').forEach(input => {
+      input.addEventListener('change', async function () {
+        let val = parseInt(this.value) || 1;
+        if (val <= 0) val = 1;
+        this.value = val;
+        const row = this.closest('.cart-item');
+        const cartId = row.dataset.cartId;
+        try {
+                    // PERBAIKAN 1 & 2: Ganti action ke 'update_jumlah' dan key ke 'jumlah'
+          await apiCall('update_jumlah', 'POST', { cart_id: cartId, jumlah: val });
+          await loadCart();
+        } catch (e) {
+          console.error(e);
+          alert('Gagal update jumlah');
         }
+      });
+    });
 
-        function hitungTotal() {
-            let total = 0;
-            const rows = document.querySelectorAll('.cart-item');
-            rows.forEach(row => {
-                const priceEl = row.querySelector('.cart-price');
-                const qtyEl   = row.querySelector('.cart-qty');
-                const subEl   = row.querySelector('.cart-subtotal');
-
-                const price = parseInt(priceEl.getAttribute('data-price')) || 0;
-                const qty   = parseInt(qtyEl.value) || 0;
-                const subtotal = price * qty;
-
-                subEl.textContent = formatRupiah(subtotal);
-                total += subtotal;
-            });
-
-            document.getElementById('cart-total').textContent = formatRupiah(total);
-
-            // kalau tidak ada item, tampilkan "keranjang kosong"
-            const cartHasItems = document.getElementById('cart-has-items');
-            const cartEmpty    = document.getElementById('cart-empty');
-            if (rows.length === 0) {
-                cartHasItems.style.display = 'none';
-                cartEmpty.style.display = 'flex';
-            } else {
-                cartHasItems.style.display = 'block';
-                cartEmpty.style.display = 'none';
-            }
+    document.querySelectorAll('.btn-delete-item').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        if (!confirm('Hapus item ini dari keranjang?')) return;
+        const row = this.closest('.cart-item');
+        const cartId = row.dataset.cartId;
+        try {
+          await apiCall('delete', 'POST', { cart_id: cartId });
+          await loadCart();
+        } catch (e) {
+          console.error(e);
+          alert('Gagal hapus item');
         }
+      });
+    });
+  }
 
-        // event: ubah qty
-        document.querySelectorAll('.cart-qty').forEach(input => {
-            input.addEventListener('change', function () {
-                if (this.value <= 0) this.value = 1;
-                hitungTotal();
-            });
-        });
+  async function loadCart() {
+    try {
+      const res = await apiCall('get_cart');
+      renderCart(res.items || []);
+    } catch (e) {
+      console.error('loadCart error', e);
+    }
+  }
 
-        // event: hapus item
-        document.querySelectorAll('.btn-delete-item').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const row = this.closest('.cart-item');
-                row.parentNode.removeChild(row);
-                hitungTotal();
-            });
-        });
+  document.addEventListener('DOMContentLoaded', function () {
+    loadCart();
 
-        // hitung total di awal
-        hitungTotal();
-    </script>
+    document.getElementById('btn-checkout').addEventListener('click', async function () {
+      if (!confirm('Lanjut ke checkout?')) return;
+      try {
+        const res = await apiCall('checkout', 'POST', {});
+        if (res.success) {
+          alert('Checkout sukses. Total: ' + formatRupiah(res.total || 0));
+          loadCart();
+        } else {
+          alert('Checkout gagal: ' + (res.error || 'Unknown'));
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Checkout error');
+      }
+    });
+  });
+
+    // Tambahkan parameter qty agar fungsi ini lebih berguna
+  async function addToCart(productId, quantity = 1) { 
+    try {
+            // Mengirim {id_produk: X, qty: Y}
+      const res = await apiCall('add', 'POST', { id_produk: productId, qty: quantity });
+      if (res.success) {
+        alert('Produk ditambahkan ke keranjang');
+        loadCart();
+      } else {
+        alert('Gagal menambah ke keranjang: ' + (res.error || 'Unknown'));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error menambah ke keranjang');
+    }
+  }
+  </script>
 </body>
 </html>

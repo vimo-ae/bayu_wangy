@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/styleee.css">
     <title>Bayu Wangy - Perfume Shop</title>
-    <style> 
-        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap');
-    </style>
 
-
+    <!-- Font External -->
+     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- navbar -->
@@ -21,16 +20,16 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 py-5 text-center text-md-start">
-                    <h1 class="text-light fw-bold mb-4">Selamat Datang di<br>Bayu Wangy</h1>
-                    <p class="about-text mb-5">
+                    <h1 class="text-light fw-bold mb-4">Selamat Datang di<br><span class="brand">Bayu Wangy</span></h1>
+                    <p class="about-text mb-4">
                         Kami adalah toko parfum yang menyediakan berbagai jenis aroma premium,
                         mulai dari parfum elegan, fresh, hingga aroma bold yang tahan lama.
                         Visi kami adalah memberikan pengalaman wangi terbaik dengan harga terjangkau,
                         serta menghadirkan koleksi parfum yang cocok untuk semua gaya dan kepribadian.
                     </p>              
-                    <a href="about.php" class="btn btn-light">Pelajari Selengkapnya</a>
+                    <a href="about.php" class="btn-custom1 mt-2">Pelajari Selengkapnya</a>
                 </div>
-                <div class="col-md-6 ">
+                <div class="col-md-6">
                     <img src="images/home_about.png" class="img-fluid about-img">
                 </div>
             </div>
@@ -40,38 +39,38 @@
     <!-- Section Katalog -->
     <section id="katalog" class="py-5">
         <div class="container">
-            <h2 class="text-dark mb-4 text-center">Katalog</h2>
-            <div class="row g-4">
+            <h2 class="text-dark mb-0 text-center subtitle">Katalog</h2>
+            <div class="row g-5 mt-0 mb-4"> 
                 <div class="col-12 col-md-4">
-                    <div class="card shadow-sm">
-                        <img src="images/home_parfum.png" class="img-fluid align-self-center catalog-img" alt="Kategori 1">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Eau de Toilette</h5>
-                            <p class="card-text">Wangi ringan dan menyegarkan yang sempurna untuk menemani aktivitas harian Anda.</p>
+                    <div class="card dark-section shadow-sm">
+                        <img src="images/home_eau_de_toilette.png" class="img-fluid align-self-center catalog-img" alt="Eau de Toilette">
+                        <div class="card-body text-center text-light mb-2">
+                            <h5 class="card-title catalog-title">Eau de Toilette</h5>
+                            <p class="card-text catalog-text">Wangi ringan dan menyegarkan yang sempurna untuk menemani aktivitas harian Anda.</p>
+                            <a href="katalog.php" class="btn-custom2 mt-2">Lihat Lainnya ..</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
-                    <div class="card shadow-sm">
-                        <img src="images/home_parfum.png" class="img-fluid align-self-center catalog-img" alt="Kategori 1">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Eau de Parfum</h5>
-                            <p class="card-text">Aroma lebih kaya dan tahan lama yang memberikan keharuman elegan sepanjang hari.</p>
+                    <div class="card dark-section shadow-sm">
+                        <img src="images/home_eau_de_parfum.png" class="img-fluid align-self-center catalog-img" alt="Eau de Parfum">
+                        <div class="card-body text-center text-light mb-2">
+                            <h5 class="card-title catalog-title">Eau de Parfum</h5>
+                            <p class="card-text catalog-text">Aroma lebih kaya dan tahan lama yang memberikan keharuman elegan sepanjang hari.</p>
+                            <a href="katalog.php" class="btn-custom2 mt-2">Lihat Lainnya ..</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
-                    <div class="card shadow-sm">
-                        <img src="images/home_parfum.png" class="img-fluid align-self-center catalog-img" alt="Kategori 1">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Extrait de Parfum</h5>
-                            <p class="card-text">Aroma paling pekat dengan kesan mewah dan sangat tahan lama.</p>
+                    <div class="card dark-section shadow-sm">
+                        <img src="images/home_extrait_de_parfum.png" class="img-fluid align-self-center catalog-img" alt="Extrait de Parfum">
+                        <div class="card-body text-center text-light mb-2">
+                            <h5 class="card-title catalog-title">Extrait de Parfum</h5>
+                            <p class="card-text catalog-text">Aroma sangat pekat dengan kesan mewah dan elegan, serta ketahanan yang luar biasa lama.</p>
+                            <a href="katalog.php" class="btn-custom2 mt-2">Lihat Lainnya ..</a>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="text-center mt-4">
-                <a href="katalog.php" class="btn btn-dark">Lihat Semua Kategori</a>
             </div>
         </div>
     </section>
@@ -79,7 +78,7 @@
     <!-- Section Produk Kami -->
     <section id="produk" class="py-5 dark-section">
         <div class="container">
-            <h2 class="mb-5 text-center text-light">Produk Kami</h2>
+            <h2 class="mb-5 text-center text-light subtitle">Produk Kami</h2>
             <div class="row g-4">
 
                 <!-- Item 1 -->
@@ -132,7 +131,8 @@
 
             </div>
             <div class="text-center mt-5">
-                <a href="produk.php" class="btn btn-light">Lihat Semua Produk</a>
+                <h6 class="catalog-text">Atau jelajahi seluruh koleksi parfum kami..</h6>
+                <a href="katalog.php" class="btn-custom1 mt-2">Lihat Semua Produk</a>
             </div>
         </div>
     </section>
@@ -143,5 +143,3 @@
     <script src="bootstrap/js/bootstrap.js"></script>
 </body>
 </html>
-
-<!-- style="font-family: 'Bodoni';"  -->

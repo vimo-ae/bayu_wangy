@@ -1,0 +1,310 @@
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #000;
+    color: #f5f5f5;
+}
+
+.hero {
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: #000;
+    position: relative;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: transparent;
+}
+
+.hero-text {
+    position: relative;
+    max-width: 800px;
+    padding: 40px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(212, 175, 55, .5);
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.45);
+    animation: fadeIn 1.8s ease;
+}
+
+.hero-text h1 {
+    font-size: 58px;
+    margin: 0;
+    color: #d4af37;
+    letter-spacing: 4px;
+}
+
+.hero-text p {
+    font-size: 20px;
+    line-height: 1.7;
+    margin-top: 15px;
+    opacity: 0.9;
+}
+
+.signature {
+    font-size: 45px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #d4af37, #f7e1a0, #c9970c);
+    color: transparent;
+    -webkit-background-clip: text;
+    margin: 50px 0px;
+    letter-spacing: 15px;
+    text-align: center;
+    line-height: 1.1;
+}
+
+.story {
+    padding: 30px 15%;
+    font-size: 18px;
+    line-height: 1.8;
+    text-align: center;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gold-line {
+    height: 3px;
+    width: 120px;
+    margin: 100px auto 30px auto;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+}
+
+.timeline {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 0;
+    flex-wrap: wrap;
+}
+
+.t-card {
+    background: #0a0a0a;
+    border: 1px solid rgba(212,175,55,0.4);
+    padding: 25px;
+    border-radius: 18px;
+    width: 260px;
+    box-shadow: 0 0 20px rgba(212,175,55,.25);
+    text-align: center;
+    transition: .4s;
+}
+
+.t-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 35px rgba(212,175,55,.45);
+}
+
+.t-card h3 {
+    color: #f7e1a0; 
+    margin-bottom: 12px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.testimoni-section {
+    text-align: center;
+    margin-top: 80px;
+}
+
+.judul-section {
+    font-size: 50px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #d4af37, #f7e1a0, #c9970c);
+    color: transparent;
+    -webkit-background-clip: text;
+    margin-bottom: 5px;
+    letter-spacing: 20px;
+}
+
+.subjudul {
+    font-size: 20px;
+    font-weight: 500;
+    background: linear-gradient(90deg, #d4af37, #f7e1a0, #c9970c);
+    color: transparent;
+    -webkit-background-clip: text;
+    opacity: 0.7;
+    margin-bottom: 35px;
+    letter-spacing: 1px;
+}
+
+.main-review-section {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+}
+.main-review-section h2 {
+    background: linear-gradient(90deg, #d4af37, #f7e1a0, #c9970c);
+    color: transparent;
+    -webkit-background-clip: text;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.review-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 20px;
+    padding-bottom: 20px;
+}
+.review-item {
+    background-color: #222; 
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 5px solid #d4af37; 
+    }
+.review-item:hover {
+    box-shadow: 0 0 35px  rgba(212, 175, 55, 0.7);
+    transition: 0.3s ease;
+}
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+.review-item strong {
+    color: #fff;
+    font-size: 1.1em;
+}
+.review-item .rating {
+    font-size: 1.2em;
+    margin-bottom: 0;
+}
+.review-item p {
+    margin-top: 5px;
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+        
+.load-more-container {
+    text-align: center;
+    margin-top: 30px;
+}
+.form-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    
+}
+
+.comment-form {
+    background-color: #1c1c1c;
+    border: 1px solid rgba(212,175,55,0.4);
+    border-radius: 18px;
+    padding: 30px;
+    width: 550px;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+    transition: transform 0.4s, box-shadow 0.4s;
+    position: relative;
+    background-clip: padding-box;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.comment-form:hover {
+    box-shadow: 0 0 35px rgba(212, 175, 55, 0.45);
+    transform: translateY(-8px);
+}
+
+.comment-form h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: #fff;
+    font-weight: 600;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #ccc;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background-color: #2a2a2a;
+    color: #fff;
+    font-size: 1em;
+    box-sizing: border-box;
+    resize: none;
+    transition: border 0.3s, 
+    background 0.3s;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: #888;
+    background-color: #333;
+    outline: none;
+}
+
+.submit-btn {
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #666;
+}
+
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    cursor: pointer;
+    color: #555;
+    transition: color 0.2s;
+    padding: 0 4px;
+}
+
+.star-rating input:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: #f1c40f;
+}
+@media (max-width: 900px) {
+.review-list {
+    grid-template-columns: 1fr;
+}
+.t-card {
+    width: 85%; 
+    }
+.main-review-section {
+    padding: 10px; 
+    }
+}        

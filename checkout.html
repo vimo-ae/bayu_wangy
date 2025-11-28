@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Toko Parfum</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section h3 {
+            margin-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .input-group input, .input-group select, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .order-summary {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .order-summary div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 14px;
+            background: #3b82f6;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-checkout:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Checkout</h2>
+
+        <!-- Informasi Pembeli -->
+        <div class="section">
+            <h3>Informasi Pembeli</h3>
+            <div class="input-group">
+                <label>Nama Lengkap</label>
+                <input type="text" placeholder="Masukkan nama anda">
+            </div>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" placeholder="contoh@email.com">
+            </div>
+            <div class="input-group">
+                <label>No Telepon</label>
+                <input type="text" placeholder="08xxxxxxxxxx">
+            </div>
+        </div>
+
+        <!-- Alamat Pengiriman -->
+        <div class="section">
+            <h3>Alamat Pengiriman</h3>
+            <div class="input-group">
+                <label>Provinsi</label>
+                <select>
+                    <option>Pilih Provinsi</option>
+                    <option>Sumatera Utara</option>
+                    <option>DKI Jakarta</option>
+                    <option>Jawa Barat</option>
+                    <option>Jawa Tengah</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Kota / Kabupaten</label>
+                <input type="text" placeholder="Masukkan Kota">
+            </div>
+
+            <div class="input-group">
+                <label>Alamat Lengkap</label>
+                <textarea rows="3" placeholder="Nama jalan, kecamatan, RT/RW"></textarea>
+            </div>
+        </div>
+
+        <!-- Ringkasan Pesanan -->
+        <div class="section">
+            <h3>Ringkasan Pesanan</h3>
+            <div class="order-summary">
+                <div>
+                    <span>Parfum Dior Sauvage (1x)</span>
+                    <span>Rp 350.000</span>
+                </div>
+                <div>
+                    <span>Ongkir</span>
+                    <span>Rp 20.000</span>
+                </div>
+                <hr>
+                <div style="font-weight: bold;">
+                    <span>Total</span>
+                    <span>Rp 370.000</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-checkout">Bayar Sekarang</button>
+
+    </div>
+
+</body>
+</html>

@@ -1,13 +1,12 @@
 body {
     background: #0D0D0D;
-    font-family: Arial, sans-serif;
-    padding: 40px;
+    font-family: 'Poppins', sans-serif;
     color: #FFFFFF;
 }
 
-.container {
+.container-catalog {
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 50px auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 50px;
@@ -19,17 +18,31 @@ body {
     border-radius: 12px;
     padding: 16px;
     width: 300px;
-    box-shadow: 0 5px 22px rgb(188, 188, 188);
+    border: 1.5px solid rgba(212, 175, 55, 0.6);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.25),
+    inset 0 0 12px rgba(212, 175, 55, 0.15);
     display: flex;
     flex-direction: column;
 }
 
-.card img {
-    width: 250px;
+.img-wrapper {
+    /* Menentukan ukuran kotak container gambar */
+    width: 250px; 
     height: 250px;
+    overflow: hidden; /* Penting: menyembunyikan bagian gambar yang berlebihan */
     border-radius: 8px;
-    display: block;
-    margin: 0 auto 16px;
+    margin: 0 auto 16px; /* Agar terletak di tengah dan ada jarak ke bawah */
+}
+
+.img-wrapper img {
+    width: 100%; /* Gambar mengisi lebar 100% dari wrapper (250px) */
+    height: 100%; /* Gambar mengisi tinggi 100% dari wrapper (250px) */
+    
+    /* 🌟 KUNCI UTAMA: Memastikan gambar mengisi area tanpa terdistorsi */
+    object-fit: cover; 
+    
+    /* Opsi object-position (opsional) */
+    object-position: center; 
 }
 
 .title {
