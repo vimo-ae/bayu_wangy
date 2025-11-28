@@ -1,6 +1,7 @@
 <?php
 session_start();
 require 'conn.php';
+echo "";
 
 function get_json_input() {
     $raw = file_get_contents('php://input');
@@ -17,11 +18,12 @@ if ($action) {
 
     try {
         if ($action === 'get_cart') {
-            $sql = "SELECT c.id AS id_keranjang, p.id AS id_produk, p.nama_produk AS name, p.harga AS price, p.image, c.jumlah AS qty
+            $sql = "SELECT c.id_keranjang AS id_keranjang, p.id_produk AS id_produk, p.nama_produk AS name, p.harga AS price, p.gambar_produk AS image, c.jumlah AS qty
                    FROM item_keranjang c
-                   JOIN produk p ON c.id_produk = p.id
+                   JOIN produk p ON c.id_produk = p.id_produk
                    WHERE c.id_sesi = ?
-                   ORDER BY c.id";
+                   ORDER BY id_keranjang";
+
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, 's', $id_sesi);
             mysqli_stmt_execute($stmt);
@@ -50,7 +52,7 @@ if ($action) {
             // (Opsional tapi direkomendasikan: Pengecekan produk ada di DB)
             // ...
 
-            $sql = "SELECT id FROM item_keranjang WHERE id_sesi = ? AND id_produk = ? LIMIT 1";
+            $sql = "SELECT id_keranjang FROM item_keranjang WHERE id_sesi = ? AND id_produk = ? LIMIT 1";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, 'si', $id_sesi, $id_produk);
             mysqli_stmt_execute($stmt);
@@ -59,9 +61,9 @@ if ($action) {
 
             if ($existing) {
                 // PERBAIKAN 2: UPDATE jumlah berdasarkan $jumlah_input
-                $sql2 = "UPDATE item_keranjang SET jumlah = jumlah + ? WHERE id = ?";
+                $sql2 = "UPDATE item_keranjang SET jumlah = jumlah + ? WHERE id_keranjang = ?";
                 $stmt2 = mysqli_prepare($conn, $sql2);
-                mysqli_stmt_bind_param($stmt2, 'ii', $jumlah_input, $existing['id']);
+                mysqli_stmt_bind_param($stmt2, 'ii', $jumlah_input, $existing['id_keranjang']);
                 mysqli_stmt_execute($stmt2);
             } else {
                 // PERBAIKAN 2: INSERT jumlah berdasarkan $jumlah_input
@@ -85,7 +87,7 @@ if ($action) {
                 echo json_encode(['error' => 'Invalid input']);
                 exit;
             }
-            $sql = "UPDATE item_keranjang SET jumlah = ? WHERE id = ? AND id_sesi = ?";
+            $sql = "UPDATE item_keranjang SET jumlah = ? WHERE id_keranjang = ? AND id_sesi = ?";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, 'iis', $jumlah, $cart_id, $id_sesi);
             mysqli_stmt_execute($stmt);
@@ -101,7 +103,7 @@ if ($action) {
                 echo json_encode(['error' => 'Invalid cart_id']);
                 exit;
             }
-            $sql = "DELETE FROM item_keranjang WHERE id = ? AND id_sesi = ?";
+            $sql = "DELETE FROM item_keranjang WHERE id_keranjang = ? AND id_sesi = ?";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, 'is', $cart_id, $id_sesi);
             mysqli_stmt_execute($stmt);
@@ -113,7 +115,7 @@ if ($action) {
             // PERBAIKAN 3: Ganti nama tabel/kolom agar sesuai skema database Anda
             $sql = "SELECT p.harga AS price, c.jumlah AS qty
                     FROM item_keranjang c
-                    JOIN produk p ON c.id_produk = p.id
+                    JOIN produk p ON c.id_produk = p.id_produk
                     WHERE c.id_sesi = ?";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, 's', $id_sesi);
@@ -159,7 +161,7 @@ if ($action) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Keranjang</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/styleee.css"> 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
         .cart-item-img { width:60px; height:60px; object-fit:cover; }
@@ -169,17 +171,17 @@ if ($action) {
 <body>
     <?php include 'navbar.php'; ?>
 
-    <section id="cart" class="cart-section bg-dark py-4">
+    <section id="cart" class="cart-section py-4">
         <div class="container">
 
             <div id="cart-empty" class="cart-empty text-center" style="display:none;">
-                <h1 class="text-light cart-title">Keranjang Anda</h1>
+                <h1 class="cart-title">Keranjang Anda</h1>
                 <p class="cart-subtitle">Keranjang Anda saat ini kosong.</p>
-                <a href="produk.php" class="btn btn-dark cart-continue-btn">LANJUT BELANJA</a>
+                <a href="katalog.php" class="btn cart-continue-btn">Lanjut Belanja</a>
             </div>
 
             <div id="cart-has-items" class="row justify-content-center">
-                <div class="col-12 col-lg-10">
+                <div class="col-12 col-lg-12">
                     <h1 class="cart-title mb-4 text-center text-md-start">Keranjang Anda</h1>
 
                     <div class="table-responsive">
@@ -188,8 +190,8 @@ if ($action) {
                                 <tr>
                                     <th scope="col">Produk</th>
                                     <th scope="col" class="text-center">Qty</th>
-                                    <th scope="col" class="text-end">Harga</th>
-                                    <th scope="col" class="text-end">Subtotal</th>
+                                    <th scope="col" class="text-center">Harga</th>
+                                    <th scope="col" class="text-center">Subtotal</th>
                                     <th scope="col" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -197,8 +199,8 @@ if ($action) {
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th colspan="3" class="text-end">Total</th>
-                                    <th class="text-end" id="cart-total">Rp0</th>
+                                    <th colspan="3" class="text-center">Total</th>
+                                    <th class="text-center" id="cart-total">Rp0</th>
                                     <th></th>
                                 </tr>
                             </tfoot>
@@ -206,8 +208,8 @@ if ($action) {
                     </div>
 
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4">
-                        <a href="katalog.php" class="btn btn-outline-light mb-3 mb-md-0">Lanjut Belanja</a>
-                        <button id="btn-checkout" class="btn btn-light" type="button">Checkout</button>
+                        <a href="katalog.php" class="btn cart-back-btn mb-3 mb-md-0">Lanjut Belanja</a>
+                        <button id="btn-checkout" class="btn cart-continue-btn" type="button">Checkout</button>
                     </div>
                 </div>
             </div>
@@ -262,6 +264,9 @@ if ($action) {
 
     let total = 0;
     items.forEach(item => {
+     console.log("Produk:", item.name);
+     console.log("Path Gambar Diterima:", item.image);
+
       const price = parseInt(item.price) || 0;
       const qty = parseInt(item.qty) || 0;
       const subtotal = price * qty;
@@ -272,18 +277,22 @@ if ($action) {
       // PERHATIKAN: PHP mengembalikan id_keranjang, tapi JS menggunakan cart_id
       tr.dataset.cartId = item.id_keranjang; 
 
-      tr.innerHTML = `
+tr.innerHTML = `
         <td>
           <div class="d-flex align-items-center">
             <img src="${item.image ? escapeHtml(item.image) : 'images/home_parfum.png'}" class="cart-item-img me-3" alt="">
             <div><div class="fw-semibold">${escapeHtml(item.name)}</div></div>
           </div>
         </td>
+        
         <td class="text-center">
-          <input type="number" class="form-control form-control-sm text-center cart-qty" value="${qty}" min="1" style="width:70px;">
+          <input type="number" class="form-control form-control-sm text-center cart-qty" value="${qty}" min="1" style="width:70px; margin: 0 auto;">
         </td>
-        <td class="text-end cart-price" data-price="${price}">${formatRupiah(price)}</td>
-        <td class="text-end cart-subtotal">${formatRupiah(subtotal)}</td>
+        
+        <td class="text-center cart-price" data-price="${price}">${formatRupiah(price)}</td>
+        
+        <td class="text-center cart-subtotal">${formatRupiah(subtotal)}</td>
+        
         <td class="text-center">
           <button class="btn btn-sm btn-outline-danger btn-delete-item">Hapus</button>
         </td>

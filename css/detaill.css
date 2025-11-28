@@ -76,7 +76,6 @@ h1 {
 .back-btn, .cart-btn {
     border-radius: 12px;
     padding: 12px 20px;
-    color: white;
     border: none;
     cursor: pointer;
     font-size: 16px;
@@ -85,10 +84,12 @@ h1 {
 
 .back-btn {
     background: #555;
+    color: white;
 }
 
 .cart-btn {
-    background: #c69a00;
+    background: #D4AF37;
+    color: black;
 }
 
 .back-btn:hover {
@@ -96,7 +97,7 @@ h1 {
 }
 
 .cart-btn:hover {
-    background: #a88300;
+    background: #b5911b;
 }
 
 @media (max-width: 800px) {

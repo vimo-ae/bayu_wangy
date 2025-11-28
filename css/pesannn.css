@@ -18,15 +18,31 @@ body {
     z-index: 990; /* Pastikan di atas konten utama */
 }
 
-.back-btn {
+.back-btn, .detail-btn {
     border-radius: 12px;
     padding: 12px 20px;
-    color: white;
     border: none;
     cursor: pointer;
     font-size: 16px;
     z-index: 999;
+}
+
+.back-btn {
     background: #555;
+    color: white;
+}
+
+.detail-btn {
+    background: #D4AF37;
+    color: black;
+}
+
+.back-btn:hover {
+    background: #444;
+}
+
+.detail-btn:hover {
+    background: #b5911b;
 }
 
 /* --- Product Container (Layout Utama) --- */

@@ -27,7 +27,7 @@ if (!$result || mysqli_num_rows($result) !== 1) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detail - <?php echo $data['nama_produk']; ?></title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="css/detail.css">
+    <link rel="stylesheet" href="css/detaill.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
@@ -38,8 +38,12 @@ if (!$result || mysqli_num_rows($result) !== 1) {
     <?php include 'navbar.php'; ?>
 
     <div class="button-bar">
-        <button class="back-btn" onclick="history.back(-1)">← Kembali</button>
-        <button class="cart-btn" onclick="window.location.href='pesan.php'">Masukkan Keranjang</button>
+        <a href="katalog.php">
+            <button class="back-btn">← Kembali ke Katalog</button>
+        </a>
+        <a href="pesan.php?id=<?php echo $id_produk_url; ?>">
+            <button class="cart-btn">Masukkan Keranjang</button>
+        </a>
     </div>
 
     <div class="detail-container">

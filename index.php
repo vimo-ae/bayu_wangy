@@ -42,7 +42,7 @@
             <h2 class="text-dark mb-0 text-center subtitle">Katalog</h2>
             <div class="row g-5 mt-0 mb-4"> 
                 <div class="col-12 col-md-4">
-                    <div class="card bg-dark shadow-sm">
+                    <div class="card dark-section shadow-sm">
                         <img src="images/home_eau_de_toilette.png" class="img-fluid align-self-center catalog-img" alt="Eau de Toilette">
                         <div class="card-body text-center text-light mb-2">
                             <h5 class="card-title">Eau de Toilette</h5>
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
-                    <div class="card bg-dark shadow-sm">
+                    <div class="card dark-section shadow-sm">
                         <img src="images/home_eau_de_parfum.png" class="img-fluid align-self-center catalog-img" alt="Eau de Parfum">
                         <div class="card-body text-center text-light mb-2">
                             <h5 class="card-title">Eau de Parfum</h5>
@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
-                    <div class="card bg-dark shadow-sm">
+                    <div class="card dark-section shadow-sm">
                         <img src="images/home_extrait_de_parfum.png" class="img-fluid align-self-center catalog-img" alt="Extrait de Parfum">
                         <div class="card-body text-center text-light mb-2">
                             <h5 class="card-title">Extrait de Parfum</h5>

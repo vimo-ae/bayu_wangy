@@ -120,13 +120,12 @@
     }
 }
 
-<<<<<<< HEAD
-=======
+
 /* keranjang */
 .cart-section {
-    padding: 80px 0;
-    background-color: #ffffff;
-    min-height: 70vh;
+    background-color: #0D0D0D;
+    min-height: 60vh;
+    margin: 0 auto;
 }
 
 .cart-empty {
@@ -141,27 +140,53 @@
     font-size: 2.5rem;
     font-weight: 600;
     margin-bottom: 0.75rem;
-    color: #111111;
-    font-family: "Bodoni Moda", serif;
+    color: #D4AF37;
 }
 
 .cart-subtitle {
     font-size: 1.05rem;
-    color: #666666;
+    color: #ffffff;
     margin-bottom: 2rem;
 }
 
 .cart-continue-btn {
-    padding: 0.9rem 2.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    border-radius: 999px;
+    border-radius: 6px;
+    padding: 12px 50px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 999;
+    background: #D4AF37;
+    color: black;
+}
+
+.cart-continue-btn:hover {
+    background: #b5911b; 
+}
+
+.cart-back-btn {
+    border-radius: 6px;
+    padding: 12px 50px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 999;
+    background: none;
+    color: #D4AF37;
+    border: 1px solid #D4AF37; /* Tombol Sekunder Outline */
+}
+
+.cart-back-btn:hover {
+    background: #1a1a1a;
+    color: #D4AF37;
+    border-color: #b5911b;
 }
 
 .cart-table {
-    border-radius: 12px;
+    border-radius: 6px;
     overflow: hidden;
     background-color: #ffffff;
+    border: 1px solid #b5911b;
 }
 
 .cart-table thead tr {
@@ -171,10 +196,32 @@
 .cart-table th {
     font-weight: 600;
     border-bottom-width: 1px;
+    border-color: #b5911b;
 }
 
 .cart-table td {
     vertical-align: middle;
+    border-color: #b5911b;
+}
+
+.cart-table td:nth-child(3), .cart-table td:nth-child(4) 
+{
+    text-align: center; 
+    vertical-align: middle; 
+}
+
+.cart-table th:first-child, tr td:first-child {
+    padding-left: 30px !important;
+}
+
+.cart-table td:nth-child(3) input[type="number"], .cart-table td:nth-child(3) .qty-control {
+    /* Memastikan elemen itu sendiri (misalnya input box) terpusat */
+    margin-left: auto;
+    margin-right: auto;
+    display: block; /* Penting agar margin auto berfungsi */
+    
+    /* Meratakan teks di dalam input box QTY */
+    text-align: center;
 }
 
 .cart-item-img {
@@ -182,6 +229,7 @@
     height: 70px;
     object-fit: cover;
     border-radius: 12px;
+    border: 1px solid #D4AF37;
 }
 
 .cart-remove-btn {
@@ -202,4 +250,4 @@
         text-align: center;
     }
 }
->>>>>>> a91355dd96638ceb7270bb57f041196ecbe9dce0
+
