@@ -8,22 +8,12 @@
 
 body {
     background: #000000;
-    /* Gaya default body adalah centering untuk halaman login/register */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    color: #ffffff;
-    overflow-x: hidden;
-}
-
-/* Pengecualian untuk halaman yang butuh scroll penuh (Akun & Riwayat) */
-.history-page,
-.account-page {
+    min-height: 100vh;
     height: auto;
-    padding: 60px 0;
-    display: block; /* Menggantikan flex centering */
-    align-items: unset;
+    color: #ffffff;
     overflow-x: hidden;
 }
 
@@ -50,29 +40,33 @@ body::before {
     text-transform: uppercase;
     background: linear-gradient(90deg, #f2e9d8, #D4AF37, #f2e9d8);
     color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
-/* ---------- LOGIN + PAGE CONTAINER ---------- */
+/* ---------- CONTAINERS ---------- */
 .login-container,
 .page-container {
     width: 500px;
     color: #000000;
 }
 
-/* ---------- LOGIN CARD (Glass Glossy) ---------- */
+/* ---------- LOGIN CARD ---------- */
 .login-card {
     padding: 35px;
     border-radius: 20px;
     background: #ffffff;
     backdrop-filter: blur(15px);
     border: 1.5px solid rgba(212, 175, 55, 0.6);
-    box-shadow: 0 0 25px rgba(212, 175, 55, 0.25),
-                inset 0 0 12px rgba(212, 175, 55, 0.15);
+    box-shadow:
+        0 0 25px rgba(212, 175, 55, 0.25),
+        inset 0 0 12px rgba(212, 175, 55, 0.15);
 }
 
 /* ---------- FORM ---------- */
 .form-group {
     margin-bottom: 20px;
+    position: relative;
 }
 
 .form-group label {
@@ -104,6 +98,17 @@ body::before {
     color: #777777;
 }
 
+/* Icon mata password */
+#togglePassword {
+    position: absolute;
+    right: 18px;
+    top: 63%;
+    transform: translateY(-35%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #b89c3a;
+}
+
 .register-text {
     margin-top: 15px;
     text-align: center;
@@ -115,6 +120,7 @@ body::before {
     color: #D4AF37;
     font-weight: 600;
     text-decoration: none;
+    transition: 0.3s;
 }
 
 .link-gold:hover {
@@ -122,13 +128,12 @@ body::before {
     text-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
 }
 
-
 /* ---------- BUTTON GENERAL ---------- */
 .btn-login,
 .btn-kembali,
 .edit-button {
     display: block;
-    width: 100%; /* Default width for login */
+    width: 100%;
     padding: 14px;
     margin-top: 20px;
     text-align: center;
@@ -157,10 +162,8 @@ body::before {
     height: auto;
     padding: 60px 0;
     display: block;
-    align-items: unset;
 }
 
-/* Container card */
 .history-container {
     display: flex;
     flex-direction: column;
@@ -168,7 +171,6 @@ body::before {
     margin-top: 30px;
 }
 
-/* ---------- CARD STYLE RIWAYAT ---------- */
 .history-card {
     padding: 25px;
     border-radius: 18px;
@@ -189,7 +191,6 @@ body::before {
         inset 0 0 12px rgba(212, 175, 55, 0.25);
 }
 
-/* ---------- TEXT RIWAYAT ---------- */
 .history-card h3 {
     font-size: 22px;
     color: #000000;
@@ -201,7 +202,6 @@ body::before {
     opacity: 0.85;
 }
 
-
 /* ---------- AKUN SAYA PAGE ---------- */
 .account-dashboard {
     display: flex;
@@ -210,13 +210,14 @@ body::before {
     background: #ffffff;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 0 25px rgba(212, 175, 55, 0.25),
-                inset 0 0 12px rgba(212, 175, 55, 0.15);
+    box-shadow:
+        0 0 25px rgba(212, 175, 55, 0.25),
+        inset 0 0 12px rgba(212, 175, 55, 0.15);
 }
 
 .sidebar {
     flex: 0 0 250px;
-    background: #1c1c1c; /* Warna lebih gelap dari background utama */
+    background: #1c1c1c;
     padding: 30px 0;
     color: #f2e9d8;
 }
@@ -234,7 +235,7 @@ body::before {
     color: #f2e9d8;
     font-size: 1em;
     border-left: 5px solid transparent;
-    transition: background-color 0.2s, border-left-color 0.2s;
+    transition: 0.2s;
 }
 
 .nav-item i {
@@ -258,6 +259,7 @@ body::before {
     border-top: 1px solid #333333;
     color: #ff5050;
 }
+
 .nav-item.logout i {
     color: #ff5050;
 }
@@ -300,13 +302,12 @@ body::before {
     color: #000000;
 }
 
-/* Penyesuaian lebar tombol edit */
 .edit-button {
     width: 200px;
     margin-top: 30px;
 }
 
-/* ---------- RESPONSIVE AKUN SAYA ---------- */
+/* ---------- RESPONSIVE ---------- */
 @media (max-width: 992px) {
     .account-dashboard {
         flex-direction: column;
@@ -342,7 +343,7 @@ body::before {
     }
 
     .nav-item.logout {
-        display: none;
+        display: flex;
     }
 
     .content-area {
@@ -363,4 +364,88 @@ body::before {
         margin-bottom: 5px;
         font-size: 13px;
     }
+}
+
+/* ---------- ALAMAT & FORM ALAMAT ---------- */
+.address-box {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+    max-width: 700px;
+    margin: auto;
+}
+
+.address-detail p {
+    margin: 8px 0;
+    font-size: 15px;
+}
+
+.btn-ubah {
+    display: inline-block;
+    margin-top: 20px;
+    background: #D4AF37;
+    color: #000;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-ubah:hover {
+    opacity: .8;
+}
+
+.address-form {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+    max-width: 500px;
+    margin-top: 20px;
+}
+
+.address-form .form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.address-form label {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.address-form input,
+.address-form textarea {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.address-form textarea {
+    min-height: 110px;
+}
+
+.btn-save {
+    background: #d4af37;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.btn-save:hover {
+    opacity: 0.8;
+}
+
+.error-messages p {
+    font-size: 14px;
 }
