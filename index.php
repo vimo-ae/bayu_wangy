@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/styleee.css">
     <title>Bayu Wangy - Perfume Shop</title>
 
     <!-- Font External -->
@@ -45,8 +45,8 @@
                     <div class="card dark-section shadow-sm">
                         <img src="images/home_eau_de_toilette.png" class="img-fluid align-self-center catalog-img" alt="Eau de Toilette">
                         <div class="card-body text-center text-light mb-2">
-                            <h5 class="card-title">Eau de Toilette</h5>
-                            <p class="card-text">Wangi ringan dan menyegarkan yang sempurna untuk menemani aktivitas harian Anda.</p>
+                            <h5 class="card-title catalog-title">Eau de Toilette</h5>
+                            <p class="card-text catalog-text">Wangi ringan dan menyegarkan yang sempurna untuk menemani aktivitas harian Anda.</p>
                             <a href="katalog.php" class="btn-custom2 mt-2">Lihat Lainnya ..</a>
                         </div>
                     </div>
@@ -55,8 +55,8 @@
                     <div class="card dark-section shadow-sm">
                         <img src="images/home_eau_de_parfum.png" class="img-fluid align-self-center catalog-img" alt="Eau de Parfum">
                         <div class="card-body text-center text-light mb-2">
-                            <h5 class="card-title">Eau de Parfum</h5>
-                            <p class="card-text">Aroma lebih kaya dan tahan lama yang memberikan keharuman elegan sepanjang hari.</p>
+                            <h5 class="card-title catalog-title">Eau de Parfum</h5>
+                            <p class="card-text catalog-text">Aroma lebih kaya dan tahan lama yang memberikan keharuman elegan sepanjang hari.</p>
                             <a href="katalog.php" class="btn-custom2 mt-2">Lihat Lainnya ..</a>
                         </div>
                     </div>
@@ -65,8 +65,8 @@
                     <div class="card dark-section shadow-sm">
                         <img src="images/home_extrait_de_parfum.png" class="img-fluid align-self-center catalog-img" alt="Extrait de Parfum">
                         <div class="card-body text-center text-light mb-2">
-                            <h5 class="card-title">Extrait de Parfum</h5>
-                            <p class="card-text">Aroma sangat pekat dengan kesan mewah, elegan, intens, dan ketahanan yang luar biasa lama.</p>
+                            <h5 class="card-title catalog-title">Extrait de Parfum</h5>
+                            <p class="card-text catalog-text">Aroma sangat pekat dengan kesan mewah dan elegan, serta ketahanan yang luar biasa lama.</p>
                             <a href="katalog.php" class="btn-custom2 mt-2">Lihat Lainnya ..</a>
                         </div>
                     </div>

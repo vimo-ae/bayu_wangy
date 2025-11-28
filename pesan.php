@@ -32,7 +32,7 @@ $harga = $data_produk['harga'];
     <title>Pesan - <?php echo $data_produk['nama_produk']; ?> | Bayu Wangy</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="css/pesannn.css"> 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/styleee.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>

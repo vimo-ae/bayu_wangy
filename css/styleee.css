@@ -1,3 +1,9 @@
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+
+
 .btn-custom1 {
     display: inline-block;
     padding: 15px 30px;
@@ -52,13 +58,17 @@
 
 /* index.php */
     .about-text {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
         line-height: 1.8;
         text-align: justify;
     }
 
+    .catalog-title {
+        font-weight: 600;
+    }
+
     .catalog-text {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
         line-height: 1.8;
         text-align: center;
     }
@@ -197,6 +207,7 @@
     font-weight: 600;
     border-bottom-width: 1px;
     border-color: #b5911b;
+    padding-block: 10px;
 }
 
 .cart-table td {
