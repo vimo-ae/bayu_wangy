@@ -2,8 +2,6 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
-
-
 .btn-custom1 {
     display: inline-block;
     padding: 15px 30px;
@@ -146,6 +144,12 @@ body {
     align-items: center;
 }
 
+.cart-empty i {
+        font-size: 5rem; /* Ukuran ikon besar */
+        color: #ddd; /* Warna abu-abu pudar */
+        margin-bottom: 20px;
+}
+
 .cart-title {
     font-size: 2.5rem;
     font-weight: 600;
@@ -165,6 +169,7 @@ body {
     border: none;
     cursor: pointer;
     font-size: 16px;
+    font-weight: 600;
     z-index: 999;
     background: #D4AF37;
     color: black;

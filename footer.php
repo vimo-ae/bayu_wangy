@@ -1,4 +1,4 @@
-<footer class="footer bg-light py-4">
+<footer class="footer bg-white py-4">
     <div class="container text-dark">
 
         <!-- Brand di tengah -->

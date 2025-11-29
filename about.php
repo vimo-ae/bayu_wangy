@@ -1,3 +1,58 @@
+<?php
+require 'conn.php';
+
+// File PHP ini HANYA akan memproses request AJAX
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    
+    header('Content-Type: application/json'); // Beri tahu JS bahwa responnya adalah JSON
+    
+    // Ambil dan bersihkan data input
+    $nama = htmlspecialchars(trim($_POST['name'] ?? '')); // Gunakan ?? '' untuk menghindari error jika data hilang
+    $rating = (int)($_POST['rating'] ?? 0);
+    $komentar = htmlspecialchars(trim($_POST['comment'] ?? ''));
+    $tanggal = date('Y-m-d H:i:s'); 
+    
+    // Validasi Dasar (Meskipun sudah divalidasi oleh JS)
+    if (empty($nama) || empty($komentar) || $rating < 1 || $rating > 5) {
+        echo json_encode(['success' => false, 'message' => 'Data input tidak lengkap atau tidak valid.']);
+        exit();
+    }
+    
+    // Query untuk menyimpan ke tabel testimoni
+    $sql = "INSERT INTO testimoni (id_komen, nama_user, rating, komentar) 
+            VALUES (?, ?, ?, ?)";
+            
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("siss", $nama, $rating, $komentar, $tanggal);
+    
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Terima kasih, testimoni Anda berhasil dipublikasikan!']);
+    } else {
+        echo json_encode(['success' => false, 'message' => "Gagal menyimpan testimoni: " . $stmt->error]);
+    }
+    $stmt->close();
+    $conn->close();
+    exit(); // Hentikan eksekusi setelah mengirim respon JSON
+}
+
+// 3. Logika untuk Mengambil Semua Testimoni dari Database
+$testimoni_list = [];
+$sql_select = "SELECT nama_user, rating, komentar FROM testimoni ORDER BY id_komen DESC"; 
+$result = $conn->query($sql_select);
+
+if ($result && $result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $testimoni_list[] = $row;
+    }
+}
+// JANGAN TUTUP KONEKSI DI SINI KARENA NANTI AKAN DITUTUP DI BLOK POST.
+// Jika Anda ingin menutupnya, lakukan di luar blok POST:
+if ($_SERVER["REQUEST_METHOD"] != "POST") {
+    $conn->close();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,7 +61,7 @@
     <title>About & Testimoni - Bayu Wangy</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="css/styleee.css">
-    <link rel="stylesheet" href="css/abouttt.css">
+    <link rel="stylesheet" href="css/about.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
@@ -46,66 +101,34 @@
 
     <div class="main-review-section">
         <div class="review-list">
-                <div class="review-item">
-                    <div class="item-header">
-                        <strong>Keyla B.</strong> <span class="rating">★★★★★</span>
-                    </div>
-                <p>Parfumnya bagus, wanginya mewah dan *packaging*-nya sangat niat!</p>
-            </div>
-
-            <div class="review-item">
-                <div class="item-header">
-                    <strong>Taufik H.</strong> <span class="rating">★★★<span class="partial">☆☆</span></span>
-                </div>
-                <p>Aromanya unik, tapi kurang tahan lama untuk aktivitas di luar ruangan.</p>
-            </div>
-
-            <div class="review-item">
-                <div class="item-header">
-                    <strong>Dina M.</strong> <span class="rating">★★★★★</span>
-                </div>
-                <p>Ini botol kedua saya, selalu suka dengan wanginya yang elegan dan berkelas!</p>
-            </div>
-
-            <div class="review-item">
-                <div class="item-header">
-                    <strong>Fahmi Z.</strong> <span class="rating">★★★★<span class="partial">☆</span></span>
-                </div>
-                <p>Sampai dengan aman. Wangi cocok untuk acara malam. Recommended!</p>
-            </div>
-            
-            <div class="review-item">
-                <div class="item-header">
-                    <strong>Lisa W.</strong> <span class="rating">★★★★<span class="partial">☆</span></span>
-                </div>
-                <p>Sedikit manis di awal, tapi *drydown*-nya jadi mewah. Puas!</p>
-            </div>
-            
-            <div class="review-item">
-                <div class="item-header">
-                    <strong>Rian P.</strong> <span class="rating">★★★★★</span>
-                </div>
-                <p>Pelayanan cepat, barang original. Tidak ada keluhan sama sekali.</p>
-            </div>
-            
-            <div class="review-item">
-                <div class="item-header">
-                    <strong>Bima K.</strong> <span class="rating">★★★★<span class="partial">☆</span></span>
-                </div>
-                <p>Botolnya cantik, aromanya maskulin. Istri saya suka sekali.</p>
-            </div>
-            
-            <div class="review-item">
-                <div class="item-header">
-                    <strong>Sari D.</strong> <span class="rating">★★★★★</span>
-                </div>
-                <p>The best parfum! Wangi mahal dengan harga terjangkau. Bintang 5!</p>
-            </div>
+    <?php
+            // Menampilkan feedback setelah submit
+            // Looping untuk menampilkan data dari database
+            if (count($testimoni_list) > 0) {
+                foreach ($testimoni_list as $testimoni) {
+                    $rating = $testimoni['rating'];
+                    // Konversi rating angka menjadi bintang Unicode
+                    $stars_filled = str_repeat('★', $rating);
+                    $stars_empty = str_repeat('☆', 5 - $rating);
+                    
+                    echo '<div class="review-item">';
+                    echo '    <div class="item-header">';
+                    echo '        <strong>' . htmlspecialchars($testimoni['nama_user']) . '</strong> ';
+                    echo '        <span class="rating">' . $stars_filled . $stars_empty . '</span>';
+                    echo '    </div>';
+                    // nl2br digunakan agar baris baru yang diinput user tetap tampil
+                    echo '    <p>' . nl2br(htmlspecialchars($testimoni['komentar'])) . '</p>';
+                    echo '</div>';
+                }
+            } else {
+                echo '<p>Belum ada testimoni. Jadilah yang pertama!</p>';
+            }
+            ?>
         </div>
     </div>
     
     <div class="form-container">
-    <form class="comment-form">
+    <form class="comment-form" method="POST" action="about.php">
         <h2>Tulis Komentar</h2>
 
         <div class="star-rating">
@@ -131,13 +154,13 @@
             <textarea id="comment" name="comment" rows="4" placeholder="Tulis komentar Anda..."></textarea>
         </div>
 
-        <button type="submit" class="submit-btn">Kirim</button>
+        <button type="submit" name="submit_comment" class="submit-btn">Kirim</button>
     </form>
 </div>
     </section>
 
     <?php include 'footer.php'; ?>
 
-    <script src="script/about.js"></script>
+    <script src="script/aboutt.js"></script>
 </body>
 </html>

@@ -111,9 +111,21 @@ if ($action) {
             exit;
         }
 
-        if ($action === 'checkout') {
-            // PERBAIKAN 3: Ganti nama tabel/kolom agar sesuai skema database Anda
-            $sql = "SELECT p.harga AS price, c.jumlah AS qty
+if ($action === 'checkout') {
+            $input = get_json_input();
+            $id_sesi = session_id(); 
+            
+            // Ambil Data Form Checkout
+            $nama_lengkap = $input['nama_lengkap'] ?? '';
+            $email = $input['email'] ?? '';
+            $no_telepon = $input['no_telepon'] ?? '';
+            // Data ini tidak dikirim dari form, dan tidak ada di tabel pesanan, jadi diabaikan di sini.
+            // $provinsi = $input['provinsi'] ?? '';
+            // $kota = $input['kota'] ?? '';
+            $alamat_detail = $input['alamat_detail'] ?? ''; 
+
+            // 1. Ambil Item Keranjang & Hitung Total (Kode ini sudah benar)
+            $sql = "SELECT p.id_produk, p.nama_produk, p.harga, c.jumlah 
                     FROM item_keranjang c
                     JOIN produk p ON c.id_produk = p.id_produk
                     WHERE c.id_sesi = ?";
@@ -122,25 +134,63 @@ if ($action) {
             mysqli_stmt_execute($stmt);
             $res = mysqli_stmt_get_result($stmt);
             $items = [];
-            while ($row = mysqli_fetch_assoc($res)) $items[] = $row;
+            $total_produk = 0;
+            while ($row = mysqli_fetch_assoc($res)) {
+                $items[] = $row;
+                $total_produk += ((float)$row['harga']) * ((int)$row['jumlah']);
+            }
 
             if (empty($items)) {
                 http_response_code(400);
-                echo json_encode(['error' => 'Cart kosong']);
+                echo json_encode(['error' => 'Keranjang kosong.']);
                 exit;
             }
+            
+            // Tetapkan Biaya Ongkir (Statis: Rp20.000)
+            $biaya_ongkir = 20000.00;
+            $total_akhir = $total_produk + $biaya_ongkir;
 
-            $total = 0;
-            // Perhitungan ini sudah benar karena hasil SELECT di-alias menjadi 'price' dan 'qty'
-            foreach ($items as $it) {
-                $total += ((int)$it['price']) * ((int)$it['qty']);
+            // 2. Simpan ke Tabel Pesanan
+            // KOREKSI SQL: Hapus kolom 'provinsi', 'kota', dan 'biaya_ongkir' 
+            // agar sesuai dengan tabel `pesanan`
+            $sql_order = "INSERT INTO pesanan 
+                          (id_sesi, nama_lengkap, email, no_telepon, alamat_detail, total_produk, total_akhir) 
+                          VALUES (?, ?, ?, ?, ?, ?, ?)";
+                          
+            $stmt_order = mysqli_prepare($conn, $sql_order);
+            
+            // KOREKSI BINDING: Sesuaikan dengan 5 string dan 2 double (7 parameter)
+            // 'sssssdd' : id_sesi, nama_lengkap, email, no_telepon, alamat_detail, total_produk, total_akhir
+            mysqli_stmt_bind_param($stmt_order, 'sssssdd', 
+                $id_sesi, $nama_lengkap, $email, $no_telepon, $alamat_detail, $total_produk, $total_akhir);
+            mysqli_stmt_execute($stmt_order);
+            
+            // Pengecekan error SQL tambahan (opsional, tapi disarankan)
+            if (mysqli_stmt_error($stmt_order)) {
+                throw new Exception("SQL Error during order insertion: " . mysqli_stmt_error($stmt_order));
             }
+            
+            $id_pesanan = mysqli_insert_id($conn);
 
+            // 3. Simpan ke Tabel DetailPesanan (Kode ini sudah benar)
+            $sql_detail = "INSERT INTO detail_pesanan (id_pesanan, id_produk, nama_produk, harga_satuan, jumlah) 
+                           VALUES (?, ?, ?, ?, ?)";
+            $stmt_detail = mysqli_prepare($conn, $sql_detail);
+            
+            foreach ($items as $item) {
+                $harga_satuan = (double)$item['harga'];
+                // Binding menggunakan 'iidsi'
+                mysqli_stmt_bind_param($stmt_detail, 'iidsi', 
+                    $id_pesanan, $item['id_produk'], $item['nama_produk'], $harga_satuan, $item['jumlah']);
+                mysqli_stmt_execute($stmt_detail);
+            }
+            
+            // 4. Kosongkan Keranjang (Kode ini sudah benar)
             $del = mysqli_prepare($conn, "DELETE FROM item_keranjang WHERE id_sesi = ?");
             mysqli_stmt_bind_param($del, 's', $id_sesi);
             mysqli_stmt_execute($del);
 
-            echo json_encode(['success' => true, 'total' => $total]);
+            echo json_encode(['success' => true, 'order_id' => $id_pesanan, 'total' => $total_akhir]);
             exit;
         }
 
@@ -175,6 +225,7 @@ if ($action) {
         <div class="container">
 
             <div id="cart-empty" class="cart-empty text-center" style="display:none;">
+                <i class="bi bi-cart-x"></i>
                 <h1 class="cart-title">Keranjang Anda</h1>
                 <p class="cart-subtitle">Keranjang Anda saat ini kosong.</p>
                 <a href="katalog.php" class="btn cart-continue-btn">Lanjut Belanja</a>
@@ -346,23 +397,26 @@ tr.innerHTML = `
     }
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     loadCart();
 
-    document.getElementById('btn-checkout').addEventListener('click', async function () {
-      if (!confirm('Lanjut ke checkout?')) return;
-      try {
-        const res = await apiCall('checkout', 'POST', {});
-        if (res.success) {
-          alert('Checkout sukses. Total: ' + formatRupiah(res.total || 0));
-          loadCart();
-        } else {
-          alert('Checkout gagal: ' + (res.error || 'Unknown'));
-        }
-      } catch (e) {
-        console.error(e);
-        alert('Checkout error');
+    // Logika untuk menampilkan alert setelah sukses checkout dari checkout.php
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('status') === 'success') {
+      
+      // Tampilkan alert yang diminta
+      alert('Pesanan Anda akan diproses, silahkan menunggu ^_^');
+      
+      // Opsional: Bersihkan parameter dari URL agar alert tidak muncul saat refresh
+      if (window.history.replaceState) {
+        const cleanUrl = window.location.href.split('?')[0];
+        window.history.replaceState(null, null, cleanUrl);
       }
+    }
+
+    document.getElementById('btn-checkout').addEventListener('click', function () {
+    // Alih-alih melakukan AJAX, tombol ini seharusnya hanya mengarahkan ke halaman Checkout
+    window.location.href = 'checkout.php'; 
     });
   });
 

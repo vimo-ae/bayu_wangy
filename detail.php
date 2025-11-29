@@ -27,7 +27,7 @@ if (!$result || mysqli_num_rows($result) !== 1) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detail - <?php echo $data['nama_produk']; ?></title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="css/detaill.css">
+    <link rel="stylesheet" href="css/detail.css">
     <link rel="stylesheet" href="css/styleee.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
