@@ -7,7 +7,7 @@ if (!isset($_GET['id'])) {
 }
 
 $id_produk_url = $_GET['id'];
-$query = "SELECT id_produk, nama_produk, merk, harga FROM produk WHERE id_produk = '$id_produk_url'";
+$query = "SELECT id_produk, nama_produk, merk, harga, gambar_produk FROM produk WHERE id_produk = '$id_produk_url'";
 $result = mysqli_query($conn, $query);
 
 if (!$result || mysqli_num_rows($result) !== 1) {
@@ -52,11 +52,7 @@ $harga = $data_produk['harga'];
         <div class="image-area">
             
             <div class="main-image-wrapper">
-                 <img src="images/image00012.webp" class="main-img" alt="Xerjoff Erba Pura">
-            </div>
-            <div class="image-grid">
-                <img src="images/erba pura 1.jpeg" alt="Erba Pura 1">
-                <img src="images/xer.webp" alt="Xerjoff Botol">
+                 <img src="<?php echo $data_produk['gambar_produk']; ?>" class="main-img" alt="Xerjoff Erba Pura">
             </div>
             
         </div>

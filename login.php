@@ -1,6 +1,6 @@
 <?php
 session_start(); 
-require 'koneksi.php'; // koneksi ke database
+require 'conn.php'; // koneksi ke database
 
 $error = "";
 

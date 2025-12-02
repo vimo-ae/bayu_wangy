@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "koneksi.php";
+include "conn.php";
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
@@ -16,6 +16,7 @@ $query->execute();
 $result = $query->get_result();
 $alamat = $result->fetch_assoc();
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

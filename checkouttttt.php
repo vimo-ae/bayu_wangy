@@ -11,160 +11,100 @@ require 'conn.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <!-- <link rel="stylesheet" href="global.css">  -->
     <link rel="stylesheet" href="css/styleee.css"> 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <title>Checkout - Toko Parfum</title>
     <style>
-        /* Styling untuk checkout.php agar sesuai dengan tema pesan.css (gelap & emas) */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
 
-body {
-    /* Mengambil dari pesan.css: Latar Belakang Gelap dan Font Poppins */
-    font-family: 'Poppins', sans-serif;
-    background: #0D0D0D; 
-    color: #E8E8E8;
-    margin: 0;
-    padding: 0;
-}
+        .checkout-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
 
-.checkout-container {
-    max-width: 900px;
-    margin: 40px auto;
-    /* Ubah background container menjadi gelap agar serasi */
-    background: #1A1A1A; /* Warna agak gelap untuk kontainer di atas #0D0D0D */
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); /* Shadow halus */
-}
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-h2 {
-    /* Judul utama emas */
-    text-align: center;
-    margin-bottom: 30px;
-    color: #D4AF37; /* Emas */
-    font-weight: 700;
-}
+        .checkout-section {
+            margin-bottom: 25px;
+        }
 
-.checkout-section {
-    margin-bottom: 35px;
-}
+        .checkout-section h3 {
+            margin-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
 
-.checkout-section h3 {
-    margin-bottom: 15px;
-    border-bottom: 1px solid #333; /* Garis pemisah lebih gelap */
-    padding-bottom: 10px;
-    color: #E8E8E8;
-    font-weight: 600;
-    font-size: 20px;
-}
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 12px;
+        }
 
-/* --- Input Field Styling --- */
-.input-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 18px;
-}
+        .input-group label {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
 
-.input-group label {
-    font-size: 14px;
-    margin-bottom: 6px;
-    color: #B2B2B2; /* Warna teks label agak abu-abu */
-}
+        .input-group input, .input-group select, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
 
-.input-group input, 
-.input-group select, 
-.input-group textarea {
-    padding: 12px;
-    border: 1px solid #333;
-    border-radius: 8px;
-    background: #282828; /* Background input gelap */
-    color: #E8E8E8;
-    font-size: 16px;
-    transition: border-color 0.2s;
-}
+        .order-summary {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            background: #fafafa;
+        }
 
-.input-group input:focus, 
-.input-group textarea:focus {
-    border-color: #D4AF37; /* Border emas saat fokus */
-    box-shadow: 0 0 0 1px #D4AF37;
-    outline: none;
-}
+        .order-summary div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
 
-/* Placeholder Styling */
-.input-group input::placeholder, 
-.input-group textarea::placeholder {
-    color: #777;
-}
+        .btn-checkout {
+            width: 100%;
+            padding: 14px;
+            background: #3b82f6;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
+        .btn-checkout:hover {
+            background: #2563eb;
+        }
 
-/* --- Ringkasan Pesanan (Order Summary) --- */
-.order-summary {
-    border: 1px solid #333;
-    padding: 20px;
-    border-radius: 10px;
-    background: #282828; /* Background summary lebih gelap dari container */
-    color: #E8E8E8;
-}
+        .error-message {
+            color: #e3342f; /* Warna merah */
+                font-size: 12px;
+                margin-top: 4px;
+            display: none; /* Sembunyikan secara default */
+        }
 
-.order-summary div {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 15px;
-}
-
-.order-summary hr {
-    border-top: 1px solid #333;
-    margin: 10px 0;
-}
-
-.order-summary div:last-child {
-    font-size: 18px;
-    font-weight: 700;
-    color: #D4AF37; /* Total harga emas */
-}
-
-
-/* --- Tombol Checkout --- */
-.btn-checkout {
-    width: 100%;
-    padding: 16px;
-    background: #D4AF37; /* Tombol Primer Emas dari pesan.css */
-    color: #000;
-    font-size: 18px;
-    font-weight: 700;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-    margin-top: 15px;
-}
-
-.btn-checkout:hover {
-    background: #b5911b; /* Efek hover emas */
-}
-
-.btn-checkout:disabled {
-    background: #555;
-    cursor: not-allowed;
-    color: #ccc;
-}
-
-
-/* --- Error Message Styling --- */
-.error-message {
-    color: #ff5555; /* Warna merah yang lebih serasi dengan tema gelap */
-    font-size: 12px;
-    margin-top: 6px;
-    display: none;
-}
-
-/* CSS untuk input yang invalid */
-.input-group input.is-invalid, 
-.input-group textarea.is-invalid {
-    border-color: #ff5555 !important; 
-    box-shadow: none;
-}
-
+            /* CSS untuk input yang invalid */
+        .input-group input.is-invalid, 
+        .input-group textarea.is-invalid {
+            border-color: #e3342f; 
+        }
     </style>
 </head>
 <body>

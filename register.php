@@ -1,5 +1,5 @@
 <?php
-require 'koneksi.php';
+require 'conn.php';
 
 $error = "";
 $success = "";

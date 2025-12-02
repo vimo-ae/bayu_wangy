@@ -28,7 +28,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="akun.html">Akun Saya</a>
+                    <a class="nav-link" href="akun.php">Akun Saya</a>
                 </li>
 
             </ul>

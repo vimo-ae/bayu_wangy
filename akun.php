@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'koneksi.php'; 
+require 'conn.php'; 
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -17,6 +17,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
