@@ -50,7 +50,7 @@ if ($result && $result->num_rows > 0) {
 if ($_SERVER["REQUEST_METHOD"] != "POST") {
     $conn->close();
 }
-
+$activePage = basename($_SERVER['PHP_SELF'], ".php");
 ?>
 
 <!DOCTYPE html>

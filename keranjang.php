@@ -202,6 +202,7 @@ if ($action === 'checkout') {
     }
     exit;
 }
+$activePage = basename($_SERVER['PHP_SELF'], ".php");
 ?>
 
 <!doctype html>

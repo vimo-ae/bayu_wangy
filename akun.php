@@ -16,6 +16,7 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
+$activePage = basename($_SERVER['PHP_SELF'], ".php");
 ?>
 <!DOCTYPE html>
 <html lang="id">

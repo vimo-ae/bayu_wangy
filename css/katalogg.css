@@ -1,55 +1,159 @@
+/* ======================= */
+/*        GLOBAL           */
+/* ======================= */
+
 body {
     background: #0D0D0D;
     font-family: 'Poppins', sans-serif;
     color: #FFFFFF;
 }
 
+/* ======================= */
+/*     WRAPPER LAYOUT      */
+/* ======================= */
+
+.katalog-wrapper {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 30px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    align-items: start;
+}
+
+/* ======================= */
+/*        FILTER BOX       */
+/* ======================= */
+
+.filter-box {
+    background: #111;
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(212, 175, 55, 0.45);
+    box-shadow: 0 0 18px rgba(212, 175, 55, 0.15);
+}
+
+.filter-box h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.filter-box label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #ddd;
+    margin: 6px 0;
+}
+
+.filter-box hr {
+    border: none;
+    height: 1px;
+    background: rgba(212, 175, 55, 0.3);
+    margin: 18px 0;
+}
+
+h4{
+    color: #D4AF37;
+}
+
+.joedoel{
+    margin-top:25px;
+}
+
+.slider {
+    width: 100%;
+    cursor: pointer;
+}
+
+input[type="range"] {
+    width: 100%;
+    height: 6px;
+    background: #D4AF37; /* warna slider */
+    border-radius: 10px;
+    accent-color: #D4AF37; /* warna tombol bulat */
+}
+
+.confirm-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: transparent;
+    color: #E6C04A;
+    border: none;
+    font-size: 18px;
+    padding: 12px;
+    cursor: pointer;
+    position: relative;
+}
+
+.confirm-btn::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: gold;
+    transition: 0.3s;
+}
+
+.confirm-btn:hover::after {
+    width: 100%;
+}
+
+
+/* ======================= */
+/*     PRODUCT GRID        */
+/* ======================= */
+
 .container-catalog {
-    max-width: 1000px;
-    margin: 50px auto;
+    width: 100%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 50px;
+    gap: 35px;
 }
+
+/* ======================= */
+/*        PRODUCT CARD     */
+/* ======================= */
 
 .card {
     background: #FFFFFF;
     color: #000;
     border-radius: 12px;
     padding: 16px;
-    width: 300px;
+    width: 100%;
     border: 1.5px solid rgba(212, 175, 55, 0.6);
     box-shadow: 0 0 25px rgba(212, 175, 55, 0.25),
-    inset 0 0 12px rgba(212, 175, 55, 0.15);
+                inset 0 0 12px rgba(212, 175, 55, 0.15);
     display: flex;
     flex-direction: column;
 }
 
 .img-wrapper {
-    /* Menentukan ukuran kotak container gambar */
-    width: 250px; 
+    width: 250px;
     height: 250px;
-    overflow: hidden; /* Penting: menyembunyikan bagian gambar yang berlebihan */
+    overflow: hidden;
     border-radius: 8px;
-    margin: 0 auto 16px; /* Agar terletak di tengah dan ada jarak ke bawah */
+    margin: 0 auto 16px;
 }
 
 .img-wrapper img {
-    width: 100%; /* Gambar mengisi lebar 100% dari wrapper (250px) */
-    height: 100%; /* Gambar mengisi tinggi 100% dari wrapper (250px) */
-    
-    /* 🌟 KUNCI UTAMA: Memastikan gambar mengisi area tanpa terdistorsi */
-    object-fit: cover; 
-    
-    /* Opsi object-position (opsional) */
-    object-position: center; 
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
 }
 
 .title h3 {
@@ -59,7 +163,6 @@ body {
 }
 
 .harga {
-    font-family: Arial, Helvetica, sans-serif;
     font-size: 15px;
     color: #222;
 }
@@ -68,15 +171,19 @@ body {
     display: block;
     font-size: 12px;
     color: #777;
-    margin-top: 3px;
-    margin-bottom: 15px;
+    margin-top: 4px;
+    margin-bottom: 14px;
 }
 
-/* Tombol */
+/* ======================= */
+/*         BUTTONS         */
+/* ======================= */
+
 .tombol {
     margin-top: 20px;
     display: flex;
     gap: 10px;
+    justify-content: center;
 }
 
 .tombol button {
@@ -89,6 +196,7 @@ body {
     color: black;
     cursor: pointer;
     transition: all 0.25s ease;
+    white-space: nowrap;
 }
 
 .tombol button:hover {
@@ -100,14 +208,44 @@ body {
     transform: translateY(0);
 }
 
-@media (max-width: 900px) {
-    .product-container {
+/* ======================= */
+/*     RESPONSIVE FIX      */
+/* ======================= */
+
+@media (max-width: 1000px) {
+    .container-catalog {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media (max-width: 600px) {
-    .product-container {
+@media (max-width: 768px) {
+    .katalog-wrapper {
         grid-template-columns: 1fr;
+    }
+
+    .filter-box {
+        order: 1;
+        margin-bottom: 20px;
+    }
+
+    .container-catalog {
+        order: 2;
+        grid-template-columns: repeat(2, 1fr);
+        justify-items: center;
+    }
+}
+
+@media (max-width: 550px) {
+    .container-catalog {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        width: 90%;
+    }
+
+    .img-wrapper {
+        width: 90%;
+        height: auto;
     }
 }
