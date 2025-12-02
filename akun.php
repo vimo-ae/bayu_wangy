@@ -35,6 +35,9 @@ $user = $result->fetch_assoc();
 
             <aside class="sidebar">
                 <nav class="account-nav">
+                    <a href="riwayat.php" class="nav-item active">
+                        <i class="fas fa-shopping-bag"></i> Profil
+                    </a>
                     <a href="riwayat.php" class="nav-item">
                         <i class="fas fa-shopping-bag"></i> Riwayat Pesanan
                     </a>

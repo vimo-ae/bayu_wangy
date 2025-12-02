@@ -16,50 +16,68 @@ $query->execute();
 $result = $query->get_result();
 $alamat = $result->fetch_assoc();
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alamat Pengiriman | Parfum Luxe</title>
+    <title>Akun Saya | Bayu Wangy</title>
     <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
-<body>
-<div class="page-container address-page">
-    <h1 class="title">Alamat Pengiriman</h1>
+<body class="account-page">
+    <div class="container">
+        <h1 class="title">Alamat Pengiriman</h1>
 
-    <div class="address-box">
+        <div class="account-dashboard">
 
-        <?php if ($alamat): ?>
-            <div class="address-detail">
-                <p><strong>Nama Penerima:</strong> <?= htmlspecialchars($alamat['nama_penerima']) ?></p>
-                <p><strong>No. Telepon:</strong> <?= htmlspecialchars($alamat['telepon']) ?></p>
-                <p><strong>Alamat Lengkap:</strong></p>
+            <aside class="sidebar">
+                <nav class="account-nav">
+                    <a href="akun.php" class="nav-item">
+                        <i class="fas fa-user"></i> Profil
+                    </a>
+                    <a href="riwayat.php" class="nav-item">
+                        <i class="fas fa-shopping-bag"></i> Riwayat Pesanan
+                    </a>
+                    <a href="alamat.php" class="nav-item active">
+                        <i class="fas fa-map-marker-alt"></i> Alamat Pengiriman
+                    </a>
+                    <a href="logout.php" class="nav-item logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </nav>
+            </aside>
 
-                <p>
-                    <?= nl2br(htmlspecialchars($alamat['alamat'])) ?><br>
+            <main class="content-area">
+                <section class="profile-section">
+                    <h2 class="section-title">Detail Alamat Pengiriman</h2>
 
-                    <?php if (!empty($alamat['kota'])): ?>
-                        <?= htmlspecialchars($alamat['kota']) ?><br>
-                    <?php endif; ?>
+                    <div class="profile-info-card">
+                        <div class="info-group">
+                            <span class="info-label">Nama Penerima:</span>
+                            <span class="info-value"><?= htmlspecialchars($alamat['nama_penerima']); ?></span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Nomor Telepon:</span>
+                            <span class="info-value"><?= htmlspecialchars($alamat['telepon']); ?></span>
+                        </div>
+                        <div class="info-group alamat-group">
+                            <span class="info-label">Alamat Lengkap:</span>
+                            <div class="alamat-value">
+                                <?= nl2br(htmlspecialchars($alamat['alamat'])) ?><br>
+                                <?= htmlspecialchars($alamat['kota']) ?><br>
+                                <?= htmlspecialchars($alamat['provinsi']) ?><br>
+                                <?= htmlspecialchars($alamat['kode_pos']) ?>
+                            </div>
+                        </div>
 
-                    <?php if (!empty($alamat['provinsi'])): ?>
-                        <?= htmlspecialchars($alamat['provinsi']) ?><br>
-                    <?php endif; ?>
+                        <a href="ubah-alamat.php" class="btn-ubah">Ubah Alamat</a>
 
-                    <?php if (!empty($alamat['kode_pos'])): ?>
-                        <?= htmlspecialchars($alamat['kode_pos']) ?>
-                    <?php endif; ?>
-                </p>
-            </div>
-        <?php else: ?>
-            <p style="text-align:center;">Belum ada alamat tersimpan.</p>
-        <?php endif; ?>
-
-        <a href="ubah-alamat.php" class="btn-ubah">Ubah Alamat</a>
+                </section>
+            </main>
+        </div>
     </div>
-
-    <a href="akun.php" class="btn-kembali">Kembali</a>
-</div>
 </body>
 </html>
