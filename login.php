@@ -14,22 +14,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if ($result->num_rows === 1) {
+    if ($result->num_rows === 0) {
+        $error = "Email Salah!";
+    } else {
         $user = $result->fetch_assoc();
-
-        // Cek password
-        if (password_verify($password, $user['password'])) {
+        if(!password_verify($password, $user['password'])) {
+            $error = "Password Salah!";
+        } else {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['nama'] = $user['nama'];
             header("Location: akun.php"); // redirect ke halaman akun
             exit();
-        } else {
-            $error = "Email atau password salah!";
         }
-    } else {
-        $error = "Email atau password salah!";
-    }
+         
+    }    
 }
 ?>
 
@@ -54,12 +53,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <h2>Masuk ke Akun</h2>
 
             <?php if ($error !== ""): ?>
-                <p style="color:red; text-align:center; margin-bottom:15px;"><?php echo $error; ?></p>
+                <div class="error-messages">
+                    <p><?= $error; ?></p>
+                </div>
             <?php endif; ?>
 
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" name="email" placeholder="Masukkan email" required>
+                <input type="email" name="email" id="email" placeholder="Masukkan email" required>
             </div>
 
             <div class="form-group">
