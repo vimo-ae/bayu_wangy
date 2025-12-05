@@ -1,7 +1,4 @@
-
-<link rel="stylesheet" href="css/navbar.css">
-
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm text-dark py-3">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
     <div class="container">
 
         <a class="navbar-brand fw-bold" href="index.php">
@@ -14,21 +11,32 @@
 
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav ms-auto">
-
+                
                 <li class="nav-item">
-                    <a class="nav-link <?= ($activePage == 'about') ? 'active' : '' ?>" href="about.php">Tentang</a>
+                    <a class="nav-link" href="about.php">Tentang</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link <?= ($activePage == 'katalog') ? 'active' : '' ?>" href="katalog.php">Katalog</a>
+                    <a class="nav-link" href="katalog.php">Katalog</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link <?= ($activePage == 'keranjang') ? 'active' : '' ?>" href="keranjang.php">Keranjang</a>
+                    <a class="nav-link" href="keranjang.php">Keranjang</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link <?= ($activePage == 'akun') ? 'active' : '' ?>" href="akun.php">Akun Saya</a>
+<?php
+    if (isset($_SESSION['id_user'])) {
+        if (($_SESSION['role'] ?? 'user') === 'admin') {
+            $akun_link = 'admin.php';
+        } else {
+            $akun_link = 'akun.php';
+        }
+    } else {
+        $akun_link = 'login.php';
+    }
+?>
+                    <a class="nav-link" href="<?= $akun_link; ?>">Akun Saya</a>
                 </li>
 
             </ul>

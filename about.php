@@ -1,25 +1,22 @@
 <?php
+session_start();
 require 'conn.php';
 
-// File PHP ini HANYA akan memproses request AJAX
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    header('Content-Type: application/json'); // Beri tahu JS bahwa responnya adalah JSON
+    header('Content-Type: application/json'); 
     
-    // Ambil dan bersihkan data input
-    $nama = htmlspecialchars(trim($_POST['name'] ?? '')); // Gunakan ?? '' untuk menghindari error jika data hilang
+    $nama = htmlspecialchars(trim($_POST['name'] ?? '')); 
     $rating = (int)($_POST['rating'] ?? 0);
     $komentar = htmlspecialchars(trim($_POST['comment'] ?? ''));
     $tanggal = date('Y-m-d H:i:s'); 
     
-    // Validasi Dasar (Meskipun sudah divalidasi oleh JS)
     if (empty($nama) || empty($komentar) || $rating < 1 || $rating > 5) {
         echo json_encode(['success' => false, 'message' => 'Data input tidak lengkap atau tidak valid.']);
         exit();
     }
     
-    // Query untuk menyimpan ke tabel testimoni
-    $sql = "INSERT INTO testimoni (id_komen, nama_user, rating, komentar) 
+    $sql = "INSERT INTO testimoni (nama_user, rating, komentar, tanggal_dibuat) 
             VALUES (?, ?, ?, ?)";
             
     $stmt = $conn->prepare($sql);
@@ -32,10 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $stmt->close();
     $conn->close();
-    exit(); // Hentikan eksekusi setelah mengirim respon JSON
+    exit(); 
 }
 
-// 3. Logika untuk Mengambil Semua Testimoni dari Database
 $testimoni_list = [];
 $sql_select = "SELECT nama_user, rating, komentar FROM testimoni ORDER BY id_komen DESC"; 
 $result = $conn->query($sql_select);
@@ -45,12 +41,10 @@ if ($result && $result->num_rows > 0) {
         $testimoni_list[] = $row;
     }
 }
-// JANGAN TUTUP KONEKSI DI SINI KARENA NANTI AKAN DITUTUP DI BLOK POST.
-// Jika Anda ingin menutupnya, lakukan di luar blok POST:
 if ($_SERVER["REQUEST_METHOD"] != "POST") {
     $conn->close();
 }
-$activePage = basename($_SERVER['PHP_SELF'], ".php");
+
 ?>
 
 <!DOCTYPE html>
@@ -61,6 +55,7 @@ $activePage = basename($_SERVER['PHP_SELF'], ".php");
     <title>About & Testimoni - Bayu Wangy</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="css/styleee.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/about.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -102,12 +97,9 @@ $activePage = basename($_SERVER['PHP_SELF'], ".php");
     <div class="main-review-section">
         <div class="review-list">
     <?php
-            // Menampilkan feedback setelah submit
-            // Looping untuk menampilkan data dari database
             if (count($testimoni_list) > 0) {
                 foreach ($testimoni_list as $testimoni) {
                     $rating = $testimoni['rating'];
-                    // Konversi rating angka menjadi bintang Unicode
                     $stars_filled = str_repeat('★', $rating);
                     $stars_empty = str_repeat('☆', 5 - $rating);
                     
@@ -116,7 +108,6 @@ $activePage = basename($_SERVER['PHP_SELF'], ".php");
                     echo '        <strong>' . htmlspecialchars($testimoni['nama_user']) . '</strong> ';
                     echo '        <span class="rating">' . $stars_filled . $stars_empty . '</span>';
                     echo '    </div>';
-                    // nl2br digunakan agar baris baru yang diinput user tetap tampil
                     echo '    <p>' . nl2br(htmlspecialchars($testimoni['komentar'])) . '</p>';
                     echo '</div>';
                 }
@@ -162,5 +153,6 @@ $activePage = basename($_SERVER['PHP_SELF'], ".php");
     <?php include 'footer.php'; ?>
 
     <script src="script/aboutt.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

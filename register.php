@@ -1,5 +1,5 @@
 <?php
-require 'koneksi.php';
+require 'conn.php';
 
 $error = "";
 $success = "";
@@ -10,7 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $password = $_POST['password'];
     $telepon  = trim($_POST['telepon']);
 
-    // Validasi server-side
     if (empty($nama) || empty($email) || empty($password)) {
         $error = "Semua field harus diisi!";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -22,7 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } elseif (!preg_match('/[0-9]/', $password)) {
         $error = "Password harus mengandung angka!";
     } else {
-        // Cek email unik
         $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -31,19 +29,46 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($result->num_rows > 0) {
             $error = "Email sudah terdaftar!";
         } else {
-            // Simpan user baru
+            $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("INSERT INTO users (nama, email, password, telepon) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $nama, $email, $hashPassword, $telepon);
+
+if ($result->num_rows > 0) {
+            $error = "Email sudah terdaftar!";
+        } else {
             $hashPassword = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO users (nama, email, password, telepon) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("ssss", $nama, $email, $hashPassword, $telepon);
 
             if ($stmt->execute()) {
-                $success = "Registrasi berhasil! Silahkan login.";
+                
+                
+                $new_user_id = $conn->insert_id; 
+
+                $stmt_alamat = $conn->prepare("INSERT INTO alamat (id_user, nama, telepon) VALUES (?, ?, ?)");
+                
+                $stmt_alamat->bind_param("iss", 
+                    $new_user_id,  
+                    $nama,         
+                    $telepon       
+                );
+                
+                if ($stmt_alamat->execute()) {
+                    $success = "Registrasi berhasil! Silakan <a href='login.php' class='link-gold'>login</a>.";
+                } else {
+                    $conn->query("DELETE FROM users WHERE id_user = $new_user_id");
+                    $error = "Registrasi gagal karena masalah database alamat. Silakan coba lagi.";
+                }
+                
+
             } else {
                 $error = "Terjadi kesalahan, coba lagi.";
             }
         }
     }
 }
+        }
+
 ?>
 
 <!DOCTYPE html>
@@ -52,16 +77,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register | Parfum Luxe</title>
-<link rel="stylesheet" href="css/global.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-</head>
+<link rel="stylesheet" href="css/akun.css">
+<link rel="stylesheet" href="css/navbar.css">
+<link rel="stylesheet" href="css/styleee.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"></head>
 <body>
 
 <div class="login-container">
     <h1 class="title">Daftar Akun</h1>
 
     <form id="registerForm" class="login-card" method="POST" action="">
-        <!-- PHP error/success -->
         <div id="error-container">
             <?php if ($error !== ""): ?>
                 <p class="error"><?= $error; ?></p>
@@ -100,6 +126,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </p>
     </form>
 </div>
-
+<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

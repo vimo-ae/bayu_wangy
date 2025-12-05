@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'conn.php';
 
 if (!isset($_GET['id'])) {
@@ -6,8 +7,10 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
+$user_id = $_SESSION['id_user'] ?? null;
+
 $id_produk_url = $_GET['id'];
-$query = "SELECT id_produk, nama_produk, merk, harga FROM produk WHERE id_produk = '$id_produk_url'";
+$query = "SELECT id_produk, nama_produk, merk, harga, gambar_produk FROM produk WHERE id_produk = '$id_produk_url'";
 $result = mysqli_query($conn, $query);
 
 if (!$result || mysqli_num_rows($result) !== 1) {
@@ -32,6 +35,7 @@ $harga = $data_produk['harga'];
     <title>Pesan - <?php echo $data_produk['nama_produk']; ?> | Bayu Wangy</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="css/pesan.css"> 
+    <link rel="stylesheet" href="css/navbar.css"> 
     <link rel="stylesheet" href="css/styleee.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -52,11 +56,7 @@ $harga = $data_produk['harga'];
         <div class="image-area">
             
             <div class="main-image-wrapper">
-                 <img src="images/image00012.webp" class="main-img" alt="Xerjoff Erba Pura">
-            </div>
-            <div class="image-grid">
-                <img src="images/erba pura 1.jpeg" alt="Erba Pura 1">
-                <img src="images/xer.webp" alt="Xerjoff Botol">
+                 <img src="<?php echo $data_produk['gambar_produk']; ?>" class="main-img" alt="Xerjoff Erba Pura">
             </div>
             
         </div>
@@ -77,6 +77,7 @@ $harga = $data_produk['harga'];
                 <span id="qty">1</span>
                 <button class="qty-btn" onclick="changeQty(1)">+</button>
                 <input type="hidden" id="id_produk_input" value="<?php echo $id_produk; ?>">
+                <input type="hidden" id="id_user_input" value="<?php echo htmlspecialchars($id_user); ?>">
             </div>
 
             <button class="buy-btn" onclick="tambahKeKeranjang()">Tambah ke Keranjang</button>
@@ -109,5 +110,6 @@ $harga = $data_produk['harga'];
     <?php include 'footer.php'; ?>
 
     <script src="script/pesannn.js"></script> 
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
