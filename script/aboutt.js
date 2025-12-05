@@ -1,17 +1,17 @@
-// testimoni.js
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('.comment-form');
     const stars = document.querySelectorAll('.star-rating label');
     let selectedRating = document.querySelector('.star-rating input:checked')?.value || 0; 
     
-    // Warna Emas (#d4af37) untuk bintang aktif dan Abu-abu untuk bintang non-aktif
+    
     const activeColor = '#d4af37'; 
     const inactiveColor = '#555'; 
     
     resetStars(); 
 
-    // --- Star Rating Logic ---
+    
     stars.forEach(star => {
         star.addEventListener('mouseover', () => highlightStars(star));
         star.addEventListener('mouseout', resetStars);
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearError('rating'); 
     }
 
-    // --- Utility Functions ---
+    
 
     function generateCommentHtml(nama, rating, komentar) {
         const fullStars = '★'.repeat(rating);
@@ -48,9 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const newReview = document.createElement('div');
         newReview.classList.add('review-item');
-        // Tidak ada highlight sementara (boxShadow atau borderLeft) di sini
-        
-        // Gunakan replace(/\n/g, '<br>') agar baris baru di textarea muncul di HTML
+      
+    
         newReview.innerHTML = `
             <div class="item-header">
                 <strong>${nama}</strong>
@@ -116,12 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return isValid;
     }
 
-    // --- Form Submission (AJAX) ---
-
+    
     form.addEventListener('submit', async function(e) {
         e.preventDefault(); 
 
-        // Ambil nilai input sebelum form di-reset
+       
         const inputNama = form.querySelector('input[name="name"]').value.trim();
         const inputKomentar = form.querySelector('textarea[name="comment"]').value.trim();
         const ratingValue = selectedRating;
@@ -147,31 +145,30 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (result.success) {
                 
-                // 1. Kosongkan form
+               
                 form.reset(); 
                 selectedRating = 0;
                 resetStars();
 
-                // 2. Buat dan Tambahkan komentar baru ke DOM
+              
                 const reviewList = document.querySelector('.review-list');
                 const newComment = generateCommentHtml(inputNama, ratingValue, inputKomentar);
                 
-                // Tambahkan di paling atas (prepend)
+                
                 reviewList.prepend(newComment); 
 
-                // 3. Scroll ke komentar baru
+                
                 newComment.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-                // 4. Hapus highlight setelah beberapa detik (TIDAK DIPERLUKAN LAGI KARENA HIGHLIGHT SUDAH DIHAPUS DI FUNGSI generateCommentHtml)
-                // Kode setTimeout dihapus di sini
+                
                 
             } else {
-                // Tampilkan pesan error jika PHP gagal menyimpan
+                
                 alert('Gagal menyimpan: ' + result.message);
             }
 
         } catch (error) {
-            console.error('Error saat mengirim AJAX:', error);
+            console.error('Error saat mengirim :', error);
             alert('Terjadi kesalahan koneksi atau server.');
         } finally {
             submitBtn.disabled = false;
