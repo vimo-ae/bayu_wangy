@@ -8,8 +8,6 @@ if (!isset($_SESSION["user_id"])) {
 }
 
 $user_id = $_SESSION["user_id"];
-
-// Ambil alamat dari DB
 $query = $conn->prepare("SELECT * FROM alamat_pengiriman WHERE user_id = ? LIMIT 1");
 $query->bind_param("i", $user_id);
 $query->execute();
