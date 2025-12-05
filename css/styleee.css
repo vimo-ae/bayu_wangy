@@ -25,18 +25,19 @@ body {
     font-size: 15px;
     font-weight: 600;
     border-radius: 6px;
-    background-color: transparent;      /* transparan */
-    color: #D4AF37;                      /* tulisan emas */
-    border: 2px solid #D4AF37;           /* outline emas */
+    background-color: transparent;     
+    color: #D4AF37;                      
+    border: 2px solid #D4AF37;           
     text-decoration: none;
     cursor: pointer;
     transition: 0.1s ease-in-out;
 }
 
 .btn-custom2:hover {
-    background-color: #D4AF37;           /* hover jadi emas full */
-    color: #000;                          /* tulisan hitam */
+    background-color: #D4AF37;           
+    color: #000;                         
 }
+
 
 .navbar-brand {
     font-family: 'Poppins', sans-serif;
@@ -54,7 +55,7 @@ body {
     font-weight: 600;
 }
 
-/* index.php */
+
     .about-text {
         font-size: 0.9rem;
         line-height: 1.8;
@@ -100,25 +101,23 @@ body {
     }
     
 
-/* footer */
+
 .footer-light {
     background: #ffffff;
     color: #000000;
-    border-top: 1px solid #e5e5e5; /* biar ada pemisah elegan */
+    border-top: 1px solid #e5e5e5; 
 }
 
 .footer-light p {
     margin-bottom: 6px;
 }
 
-/* tambahan */
 
-/* Katolog image fix */
 .catalog-img {
     max-width: 70%;
 }
 
-/* Jika layar kecil */
+
 @media (max-width: 767px) {
     #about h1 {
         font-size: 2rem;
@@ -129,7 +128,7 @@ body {
 }
 
 
-/* keranjang */
+
 .cart-section {
     background-color: #0D0D0D;
     min-height: 60vh;
@@ -145,8 +144,8 @@ body {
 }
 
 .cart-empty i {
-        font-size: 5rem; /* Ukuran ikon besar */
-        color: #ddd; /* Warna abu-abu pudar */
+        font-size: 5rem; 
+        color: #ddd; 
         margin-bottom: 20px;
 }
 
@@ -165,7 +164,7 @@ body {
 
 .cart-continue-btn {
     border-radius: 6px;
-    padding: 12px 50px;
+    padding: 12px 70px;
     border: none;
     cursor: pointer;
     font-size: 16px;
@@ -181,14 +180,14 @@ body {
 
 .cart-back-btn {
     border-radius: 6px;
-    padding: 12px 50px;
+    padding: 12px 70px;
     border: none;
     cursor: pointer;
     font-size: 16px;
     z-index: 999;
     background: none;
     color: #D4AF37;
-    border: 1px solid #D4AF37; /* Tombol Sekunder Outline */
+    border: 1px solid #D4AF37; 
 }
 
 .cart-back-btn:hover {
@@ -231,12 +230,12 @@ body {
 }
 
 .cart-table td:nth-child(3) input[type="number"], .cart-table td:nth-child(3) .qty-control {
-    /* Memastikan elemen itu sendiri (misalnya input box) terpusat */
+   
     margin-left: auto;
     margin-right: auto;
-    display: block; /* Penting agar margin auto berfungsi */
+    display: block; 
     
-    /* Meratakan teks di dalam input box QTY */
+   
     text-align: center;
 }
 
@@ -251,7 +250,35 @@ body {
 .cart-remove-btn {
     font-size: 0.85rem;
 }
-
+.qty-control {
+    background: #f7f7f7;
+    border-radius: 999px;
+    padding: 3px 8px;
+    border: 1px solid #D4AF37;
+}
+.qty-control .cart-qty {
+    width: 55px;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    font-weight: 600;
+}
+.qty-control .cart-qty:focus {
+    outline: none;
+    box-shadow: none;
+}
+.btn-qty {
+    border-radius: 999px;
+    border: none;
+    min-width: 26px;
+    padding: 2px 0;
+    font-weight: 700;
+    background: #D4AF37;
+    color: #000;
+}
+.btn-qty:hover {
+    background: #b5911b;
+}
 @media (max-width: 767px) {
     .cart-section {
         padding-top: 60px;
@@ -266,4 +293,3 @@ body {
         text-align: center;
     }
 }
-
