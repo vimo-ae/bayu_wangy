@@ -2,48 +2,37 @@
 session_start();
 include "conn.php";
 
-if (!isset($_SESSION["user_id"])) {
+if (!isset($_SESSION["id_user"])) {
     header("Location: login.php");
     exit();
 }
 
-$user_id = $_SESSION["user_id"];
+$id_user = $_SESSION["id_user"];
 
-// Ambil data lama (kalau ada)
-$query = $conn->prepare("SELECT * FROM alamat_pengiriman WHERE user_id = ? LIMIT 1");
-$query->bind_param("i", $user_id);
+$query = $conn->prepare("SELECT * FROM alamat WHERE id_user = ? LIMIT 1");
+$query->bind_param("i", $id_user);
 $query->execute();
 $result = $query->get_result();
 $alamat = $result->fetch_assoc();
 
-// Jika form disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $nama   = $_POST["nama_penerima"];
-    $telepon = $_POST["telepon"];
-    $alamat_lengkap = $_POST["alamat"];
-    $kota = $_POST["kota"];
-    $provinsi = $_POST["provinsi"];
-    $kode_pos = $_POST["kode_pos"];
+    $nama = $_POST["nama_penerima"] ?? '';
+    $telepon = $_POST["telepon"] ?? '';
+    $alamat_lengkap = $_POST["alamat"] ?? '';
+    $kota = $_POST["kota"] ?? '';
+    $provinsi = $_POST["provinsi"] ?? '';
+    $kode_pos = $_POST["kode_pos"] ?? '';
 
-    // Jika user belum punya alamat → INSERT
     if ($alamat == null) {
-        $insert = $conn->prepare("
-            INSERT INTO alamat_pengiriman 
-            (user_id, nama_penerima, telepon, alamat, kota, provinsi, kode_pos)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ");
-        $insert->bind_param("issssss", $user_id, $nama, $telepon, $alamat_lengkap, $kota, $provinsi, $kode_pos);
+        $insert = $conn->prepare("INSERT INTO alamat (id_user, nama, telepon, alamat, kota, provinsi, kode_pos)
+            VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $insert->bind_param("issssss", $id_user, $nama, $telepon, $alamat_lengkap, $kota, $provinsi, $kode_pos);
         $insert->execute();
-
     } else {
-        // Kalau sudah ada → UPDATE
-        $update = $conn->prepare("
-            UPDATE alamat_pengiriman
-            SET nama_penerima=?, telepon=?, alamat=?, kota=?, provinsi=?, kode_pos=?
-            WHERE user_id=?
-        ");
-        $update->bind_param("ssssssi", $nama, $telepon, $alamat_lengkap, $kota, $provinsi, $kode_pos, $user_id);
+        $update = $conn->prepare("UPDATE alamat SET nama=?, telepon=?, alamat=?, kota=?, provinsi=?, kode_pos=? 
+            WHERE id_user=?");
+        $update->bind_param("ssssssi", $nama, $telepon, $alamat_lengkap, $kota, $provinsi, $kode_pos, $id_user);
         $update->execute();
     }
 
@@ -51,17 +40,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <title>Ubah Alamat | Parfum Luxe</title>
-    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="css/akun.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/styleee.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
 </head>
 <body>
-
+<?php include 'navbar.php'; ?>
 <div class="page-container address-page">
     <h1 class="title">Ubah Alamat</h1>
 
@@ -70,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="form-row">
             <label>Nama Penerima:</label>
             <input type="text" name="nama_penerima" required
-                value="<?= $alamat['nama_penerima'] ?? '' ?>">
+            value="<?= $alamat['nama'] ?? '' ?>">
         </div>
 
         <div class="form-row">
@@ -107,6 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <a href="alamat.php" class="btn-kembali">Kembali</a>
 </div>
-
+<?php include 'footer.php'; ?>
+<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

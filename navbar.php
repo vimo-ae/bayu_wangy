@@ -1,17 +1,14 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm text-dark py-3">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
     <div class="container">
 
-        <!-- Logo / Brand -->
         <a class="navbar-brand fw-bold" href="index.php">
             Bayu Wangy
         </a>
 
-        <!-- Button Mobile -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Menu -->
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav ms-auto">
                 
@@ -28,7 +25,18 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="akun.php">Akun Saya</a>
+<?php
+    if (isset($_SESSION['id_user'])) {
+        if (($_SESSION['role'] ?? 'user') === 'admin') {
+            $akun_link = 'admin.php';
+        } else {
+            $akun_link = 'akun.php';
+        }
+    } else {
+        $akun_link = 'login.php';
+    }
+?>
+                    <a class="nav-link" href="<?= $akun_link; ?>">Akun Saya</a>
                 </li>
 
             </ul>

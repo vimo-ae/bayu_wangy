@@ -1,20 +1,9 @@
-<?php
-
+<?php 
 session_start();
 require 'conn.php';
 
-if (!isset($_SESSION['id_user']) || ($_SESSION['role'] ?? '') !== 'admin') {
-    header("Location: login.php");
-    exit();
-}
+$user_query = $conn->query("SELECT id_user, nama, email, telepon, tanggal_daftar FROM users WHERE role != 'admin'");
 
-$id_user = $_SESSION['id_user'];
-$sql = "SELECT nama, email, tanggal_daftar FROM users WHERE id_user = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id_user);
-$stmt->execute();
-$result = $stmt->get_result();
-$admin_user = $result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -42,13 +31,13 @@ $admin_user = $result->fetch_assoc();
 
             <aside class="sidebar">
                 <nav class="account-nav">
-                    <a href="admin.php" class="nnav-item active">
+                    <a href="admin.php" class="nnav-item">
                         <i class="bi bi-person me-2"></i> Profil
                     </a>
                     <a href="admin-tab-produk.php" class="nnav-item">
                         <i class="bi bi-box-seam me-2"></i> Kelola Produk
                     </a>
-                    <a href="admin-tab-user.php" class="nnav-item">
+                    <a href="admin-tab-user.php" class="nnav-item active">
                         <i class="bi bi-people me-2"></i> Kelola User
                     </a>
                     <a href="admin-tab-pesanan.php" class="nnav-item">
@@ -64,26 +53,41 @@ $admin_user = $result->fetch_assoc();
             </aside>
 
             <main class="content-area">
-                <section class="profile-section">
-                    <h2 class="section-title">Detail Informasi Profil</h2>
 
-                    <div class="profile-info-card">
-                        <div class="info-group">
-                            <span class="info-label">Nama Admin:</span>
-                            <span class="info-value"><?= htmlspecialchars($admin_user['nama']); ?></span>
-                        </div>
-                        <div class="info-group">
-                            <span class="info-label">Email:</span>
-                            <span class="info-value"><?= htmlspecialchars($admin_user['email']); ?></span>
-                        </div>
-                        <div class="info-group">
-                            <span class="info-label">Tanggal Daftar:</span>
-                            <span class="info-value"><?= date('d F Y', strtotime($admin_user['tanggal_daftar'])); ?></span>
-                        </div>
-                    </div>
-                </section>
+                <h2 class="section-title">Kelola Data User</h2>
+
+                <div class="address-form" style="max-width: 1200px; margin: 30px auto;">
+                    <h4 class="mb-4">Daftar Pengguna Aktif</h4>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Telepon</th>
+                                <th>Tgl Daftar</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($user = $user_query->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= $user['id_user']; ?></td>
+                                <td><?= htmlspecialchars($user['nama']); ?></td>
+                                <td><?= htmlspecialchars($user['email']); ?></td>
+                                <td><?= htmlspecialchars($user['telepon'] ?? '-'); ?></td>
+                                <td><?= date('d M Y', strtotime($user['tanggal_daftar'])); ?></td>
+                                <td>
+                                    <a href="admin-hapususer.php?id=<?= $user['id_user']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus user ini?');"><i class="bi bi-trash"></i></a>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+
             </main>
-        </div>
+            </div>
     </div>
     <?php include 'footer.php'; ?>
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>

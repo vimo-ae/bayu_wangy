@@ -1,17 +1,21 @@
 async function tambahKeKeranjang() {
-    // 1. Ambil ID Produk dan Jumlah
     const idProduk = document.getElementById('id_produk_input').value;
     const quantity = parseInt(document.getElementById('qty').textContent);
+    const idUser = document.getElementById('id_user_input').value;
 
     if (!idProduk || quantity < 1) {
         alert("ID Produk atau Jumlah tidak valid.");
         return;
     }
     
-    // 2. Tentukan Endpoint API Keranjang
+    if (!idUser) {
+        alert("Anda harus login untuk menambahkan item ke keranjang.");
+        window.location.href = 'login.php'; 
+        return;
+    }
+
     const endpoint = `keranjang.php?action=add`;
 
-    // 3. Kirim Data menggunakan Fetch API (metode POST)
     try {
         const response = await fetch(endpoint, {
             method: 'POST',
@@ -20,7 +24,8 @@ async function tambahKeKeranjang() {
             },
             body: JSON.stringify({
                 id_produk: idProduk,
-                qty: quantity
+                qty: quantity,
+                id_user: idUser
             })
         });
 
@@ -28,11 +33,16 @@ async function tambahKeKeranjang() {
 
         if (result.success) {
             alert(`Produk berhasil ditambahkan ke keranjang sebanyak ${quantity} item!`);
-            // Opsional: Langsung arahkan ke halaman keranjang
             window.location.href = 'keranjang.php'; 
-        } else {
+            } else {
+            const errorMessage = result.error || '';
+            
+            if (errorMessage.includes('login') || errorMessage.includes('Akses ditolak')) {
+                alert(`Gagal menambah ke keranjang: ${errorMessage}\nAnda akan diarahkan ke halaman login.`);
+                window.location.href = 'login.php';
+                return;
+            }
             alert(`Gagal menambah ke keranjang: ${result.error || 'Terjadi kesalahan.'}\nDetail: ${result.message || 'Tidak ada detail error.'}`);
-            // alert(`Gagal menambah ke keranjang: ${result.error || 'Terjadi kesalahan.'}`);
         }
     } catch (e) {
         console.error("Error:", e);

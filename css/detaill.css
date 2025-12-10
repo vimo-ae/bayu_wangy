@@ -14,13 +14,13 @@ body {
     flex-wrap: wrap;
 }
 
-/* --- Perubahan pada Judul Produk (H1) --- */
+
 h1 {
     margin-top: 0;
-    font-size: 38px; /* Lebih besar, seperti .product-title di pesan.css */
-    color: #D4AF37; /* Menggunakan warna emas yang sama */
+    font-size: 38px; 
+    color: #D4AF37; 
     letter-spacing: 1px;
-    font-weight: 700; /* Dibuat lebih tebal */
+    font-weight: 700; 
     margin-bottom: 5px;
 }
 
@@ -43,46 +43,45 @@ h1 {
     flex: 2 1 400px;
 }
 
-/* --- Perubahan pada Label (BRAND, TYPE, SIZE) --- */
 .label {
-    color: #B2B2B2; /* Warna abu-abu yang lebih lembut, seperti .product-type di pesan.css */
-    font-weight: 500; /* Sedikit lebih tipis */
-    margin-top: 25px; /* Dibuat sedikit lebih rapat */
+    color: #B2B2B2; 
+    font-weight: 500; 
+    margin-top: 25px; 
     margin-bottom: 0;
-    font-size: 14px; /* Ukuran yang lebih kecil */
-    text-transform: uppercase; /* Dibuat uppercase */
+    font-size: 14px; 
+    text-transform: uppercase; 
     letter-spacing: 1px;
 }
 
-/* --- Perubahan pada Nilai (Value) --- */
+
 .value {
     margin-top: 6px;
-    font-size: 20px; /* Sedikit lebih kecil dari sebelumnya (22px) untuk keseimbangan */
+    font-size: 20px;
     font-weight: 600;
-    color: white; /* Dipastikan berwarna putih terang */
+    color: white; 
 }
 
-/* --- Perubahan pada Header NOTES (H3) --- */
-.details h3.label { /* Khusus untuk H3 NOTES */
+
+.details h3.label {
     font-size: 18px;
     font-weight: 500;
-    color: #E8E8E8; /* Warna putih terang */
-    text-transform: none; /* Tidak uppercase */
+    color: #E8E8E8; 
+    text-transform: none; 
     letter-spacing: normal;
     margin-bottom: 15px;
     margin-top: 35px;
 }
 
 
-/* --- Perubahan pada Bagian NOTES --- */
+
 .details p:nth-of-type(3), 
 .details p:nth-of-type(4), 
 .details p:nth-of-type(5) {
-    color: #B2B2B2; /* Warna abu-abu lembut agar mirip dengan acc-content */
+    color: #B2B2B2;
     margin-bottom: 5px;
 }
 .details p b {
-    color: #E8E8E8; /* Membuat label Top/Heart/Base Notes sedikit lebih terang */
+    color: #E8E8E8;
 }
 
 
@@ -91,13 +90,10 @@ h1 {
     line-height: 1.7;
     font-size: 17px;
     opacity: 0.95;
-    /* Tambahkan border-top untuk konsistensi dengan pesan.css */
     border-top: 1px solid #333;
     padding-top: 20px;
 }
 
-
-/* Bagian button-bar tidak diubah karena sudah memiliki gaya yang mirip */
 .button-bar {
     top: 100px; 
     left: 0;
@@ -140,15 +136,15 @@ h1 {
     background: #b5911b;
 }
 
-/* --- Responsiveness (Disesuaikan dengan perubahan di atas) --- */
+
 @media (max-width: 800px) {
-    .detail-container { /* Menggunakan .detail-container karena Anda mengubah nama kelas dari .container */
+    .detail-container {
         padding: 25px;
         gap: 30px;
     }
 
     h1 {
-        font-size: 32px; /* Disesuaikan untuk tampilan mobile */
+        font-size: 32px; 
     }
 
     .value {
@@ -168,7 +164,7 @@ h1 {
         text-align: center;
     }
 
-    .details { /* Mengubah .details-section ke .details */
+    .details { 
         padding-top: 15px;
     }
 
@@ -203,7 +199,7 @@ h1 {
     }
 
     .value {
-        font-size: 16px; /* Lebih kecil lagi */
+        font-size: 16px; 
     }
 
     .description {
@@ -215,7 +211,7 @@ h1 {
     .cart-btn {
         font-size: 14px;
         padding: 10px 12px;
-        /* Hapus posisi fixed/absolute di sini jika tidak diperlukan */
+       
     }
 
     .detail-container {

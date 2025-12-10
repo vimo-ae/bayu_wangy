@@ -1,4 +1,4 @@
-/* ---------- GLOBAL STYLE ---------- */
+
 * {
     margin: 0;
     padding: 0;
@@ -8,16 +8,14 @@
 
 body {
     background: #000000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
     height: auto;
     color: #ffffff;
     overflow-x: hidden;
+  
 }
 
-/* Soft Gold Glow Background Accent */
+
 body::before {
     content: "";
     position: absolute;
@@ -30,7 +28,7 @@ body::before {
     z-index: -1;
 }
 
-/* ---------- TITLE ---------- */
+
 .title {
     text-align: center;
     margin-bottom: 30px;
@@ -44,14 +42,24 @@ body::before {
     background-clip: text;
 }
 
-/* ---------- CONTAINERS ---------- */
+
 .login-container,
 .page-container {
     width: 500px;
     color: #000000;
+    margin: 100px auto;
+    padding: 0;
 }
 
-/* ---------- LOGIN CARD ---------- */
+.akun-container {
+    margin: 100px auto;
+}
+
+.adminproduk-container {
+    margin: 50px auto;
+}
+
+
 .login-card {
     padding: 35px;
     border-radius: 20px;
@@ -61,9 +69,9 @@ body::before {
     box-shadow:
         0 0 25px rgba(212, 175, 55, 0.25),
         inset 0 0 12px rgba(212, 175, 55, 0.15);
-}
+    }
 
-/* ---------- FORM ---------- */
+
 .form-group {
     margin-bottom: 20px;
     position: relative;
@@ -98,7 +106,15 @@ body::before {
     color: #777777;
 }
 
-/* Icon mata password */
+.address-form {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+    max-width: 100%; 
+    margin-top: 20px;
+}
+
 #togglePassword {
     position: absolute;
     right: 18px;
@@ -128,7 +144,7 @@ body::before {
     text-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
 }
 
-/* ---------- BUTTON GENERAL ---------- */
+
 .btn-login,
 .btn-kembali,
 .edit-button {
@@ -157,10 +173,10 @@ body::before {
     box-shadow: 0 0 25px rgba(212, 175, 55, 0.55);
 }
 
-/* ---------- AKUN, RIWAYAT, ALAMAT ---------- */
+
 .account-dashboard {
     display: flex;
-    max-width: 1100px;
+    max-width: 1400px;
     margin: 0 auto;
     background: #ffffff;
     border-radius: 20px;
@@ -182,7 +198,7 @@ body::before {
     flex-direction: column;
 }
 
-.nav-item {
+.nnav-item {
     display: flex;
     align-items: center;
     padding: 15px 30px;
@@ -193,29 +209,29 @@ body::before {
     transition: 0.2s;
 }
 
-.nav-item i {
+.nnav-item i {
     margin-right: 15px;
     font-size: 1.2em;
     color: #D4AF37;
 }
 
-.nav-item:hover {
+.nnav-item:hover {
     background-color: #333333;
 }
 
-.nav-item.active {
+.nnav-item.active {
     border-left-color: #D4AF37;
     background-color: #2c2c2c;
     font-weight: 400;
 }
 
-.nav-item.logout {
+.nnav-item.logout {
     margin-top: 20px;
     border-top: 1px solid #333333;
     color: #ff5050;
 }
 
-.nav-item.logout i {
+.nnav-item.logout i {
     color: #ff5050;
 }
 
@@ -262,7 +278,7 @@ body::before {
     margin-top: 30px;
 }
 
-/* ---------- RESPONSIVE ---------- */
+
 @media (max-width: 992px) {
     .account-dashboard {
         flex-direction: column;
@@ -321,10 +337,9 @@ body::before {
     }
 }
 
-/* ---------- FORM UBAH ALAMAT ---------- */
+
 .btn-ubah {
     display: inline-block;
-    margin-top: 50px;
     background: #D4AF37;
     color: #000;
     padding: 12px 25px;
@@ -387,7 +402,7 @@ body::before {
     opacity: 0.8;
 }
 
-/* ---------- ERROR/SUCCESS MESSAGES ---------- */
+
 #error-container p,
 .error-messages p,
 #client-errors p {

@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'conn.php';
 
 if (!isset($_GET['id'])) {
@@ -28,13 +29,14 @@ if (!$result || mysqli_num_rows($result) !== 1) {
     <title>Detail - <?php echo $data['nama_produk']; ?></title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="css/detaill.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/styleee.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
     
-     <!-- navbar -->
     <?php include 'navbar.php'; ?>
 
     <div class="button-bar">
@@ -48,7 +50,6 @@ if (!$result || mysqli_num_rows($result) !== 1) {
 
     <div class="detail-container">
 
-        <!-- LEFT IMAGE -->
         <div class="image">
             <img src="<?php echo $data['gambar_produk']; ?>" alt="<?php echo $data['nama_produk']; ?>">
         </div>
@@ -81,9 +82,8 @@ if (!$result || mysqli_num_rows($result) !== 1) {
     </div>
 
 
-    <!-- footer -->
     <?php include 'footer.php'; ?>
-
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

@@ -1,10 +1,58 @@
 <?php
+session_start();
 require 'conn.php';
 
-$query = "SELECT * FROM produk";
+$active_tipe_filter = [];
+
+if (!empty($_GET['tipe'])) {
+    $active_tipe_filter[] = $_GET['tipe'];
+}
+
+if (!empty($_GET['tipe_parfum']) && is_array($_GET['tipe_parfum'])) {
+    // Gabungkan filter dari link index dengan filter dari form (jika ada)
+    $active_tipe_filter = array_merge($active_tipe_filter, $_GET['tipe_parfum']);
+    // Hapus duplikasi jika ada
+    $active_tipe_filter = array_unique($active_tipe_filter); 
+}
+
+
+$query = "SELECT * FROM produk WHERE 1"; // Mulai dengan WHERE 1
+
+if (!empty($active_tipe_filter)) {
+    // Amankan dan siapkan array untuk query IN
+    $safe_tipe_list = array_map(function($tipe) use ($conn) {
+        return "'" . $conn->real_escape_string($tipe) . "'";
+    }, $active_tipe_filter);
+
+    $jenisList = implode(",", $safe_tipe_list);
+    $query .= " AND tipe_parfum IN ($jenisList)";
+}
+
+$min = isset($_GET['min']) ? intval($_GET['min']) : 0;
+$max = isset($_GET['max']) ? intval($_GET['max']) : 12500000;
+
+$query .= " AND harga BETWEEN $min AND $max";
+
+if (!empty($_GET['brand'])) {
+    $filterBrand = array_map('mysqli_real_escape_string', 
+                    array_fill(0, count($_GET['brand']), $conn),
+                    $_GET['brand']);
+
+    $brandList = "'" . implode("','", $_GET['brand']) . "'";
+    $query .= " AND merk IN ($brandList)";
+}
+
+if (!empty($_GET['tipe_parfum'])) {
+    $jenisList = "'" . implode("','", $_GET['tipe_parfum']) . "'";
+    $query .= " AND tipe_parfum IN ($jenisList)";
+}
+
 $result = mysqli_query($conn, $query);
 
+$activePage = basename($_SERVER['PHP_SELF'], ".php");
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,16 +62,122 @@ $result = mysqli_query($conn, $query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Katalog</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="css/katalogg.css">
+    <link rel="stylesheet" href="css/kataloggg.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/styleee.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <!-- navbar -->
     <?php include 'navbar.php'; ?>
  
+    <div class="katalog-wrapper">
+
+
+     <form method="GET" action="katalog.php">
+<div class="filter-box">
+<div class="filter-group mb-4">
+    <h4>Jenis Parfum</h4>
     
+    <?php
+    $list_tipe_parfum = [
+        'Eau de Toilette', 
+        'Eau de Parfum', 
+        'Extrait de Parfum'
+    ];
+
+    foreach ($list_tipe_parfum as $tipe): 
+        $is_checked = in_array($tipe, $active_tipe_filter) ? 'checked' : ''; 
+        
+        $safe_id = str_replace(' ', '_', $tipe);
+    ?>
+
+    <div class="form-check">
+        <input 
+            class="form-check-input" 
+            type="checkbox" 
+            name="tipe_parfum[]" 
+            value="<?= htmlspecialchars($tipe) ?>" 
+            id="tipe_<?= $safe_id ?>"
+            <?= $is_checked ?> 
+        >
+        <label class="form-check-label" for="tipe_<?= $safe_id ?>">
+            <?= htmlspecialchars($tipe) ?>
+        </label>
+    </div>
+
+    <?php endforeach; ?>
+</div>
+
+        <h4 class="joedoel">Harga</h4>
+
+<div class="price-display">
+    <span>Min: <strong id="minValue">Rp <?= number_format($min, 0, ',', '.') ?></strong></span><br>
+    <span>Max: <strong id="maxValue">Rp <?= number_format($max, 0, ',', '.') ?></strong></span>
+</div>
+
+<input type="range" id="minRange" min="0" max="12500000" step="1000"
+       name="min" value="<?= $min ?>">
+
+<input type="range" id="maxRange" min="0" max="12500000" step="1000"
+       name="max" value="<?= $max ?>" style="margin-top:10px;">
+
+
+        <h4 class="joedoel">Brand</h4>
+        <label><input type="checkbox" name="brand[]" value="Xerjoff"
+            <?= (isset($_GET['brand']) && in_array("Xerjoff", $_GET['brand'])) ? "checked" : "" ?>>
+            Xerjoff
+        </label>
+
+        <label><input type="checkbox" name="brand[]" value="Versace"
+            <?= (isset($_GET['brand']) && in_array("Versace", $_GET['brand'])) ? "checked" : "" ?>>
+            Versace
+        </label>
+
+        <label><input type="checkbox" name="brand[]" value="Maison Francis Kurkdjian"
+            <?= (isset($_GET['brand']) && in_array("Maison Francis Kurkdjian", $_GET['brand'])) ? "checked" : "" ?>>
+            Maison Francis Kurkdjian
+        </label>
+
+        <label><input type="checkbox" name="brand[]" value="Parfums de Marly"
+            <?= (isset($_GET['brand']) && in_array("Parfums de Marly", $_GET['brand'])) ? "checked" : "" ?>>
+            Parfums de Marly
+        </label>
+
+        <button type="submit" class="confirm-btn">Konfirmasi</button>
+
+    </form>
+
+</div>
+
+
+    <div class="container-catalog">
+        <?php while ($data = mysqli_fetch_assoc($result)) : ?>
+        <?php $id_produk = $data['id_produk']; ?>
+        <div class="card">
+            <div class="img-wrapper">
+                <img src="<?php echo $data['gambar_produk']; ?>" alt="">
+            </div>
+
+            <div class="title">
+                <h3><?= $data['nama_produk'] ?></h3>
+                <span class="harga">Rp <?= number_format($data['harga'], 0, ',', '.'); ?></span>
+            </div>
+
+            <span class="brand"><?= $data['merk']; ?></span>
+
+            <div class="tombol">
+                <a href="detail.php?id=<?= $id_produk; ?>"><button>Detail</button></a>
+                <a href="pesan.php?id=<?= $id_produk; ?>"><button>Masukkan Keranjang</button></a>
+            </div>
+        </div>
+        <?php endwhile; ?>
+    </div>
+
+</div>
+
+
     <div class="container-catalog">
         <?php while ($data = mysqli_fetch_assoc($result)) : ?>
         <?php $id_produk = $data['id_produk']; ?>
@@ -51,9 +205,29 @@ $result = mysqli_query($conn, $query);
         
     </div>
     
-    <!-- footer -->
     <?php include 'footer.php'; ?>
 
+<script>
+    const minRange = document.getElementById("minRange");
+    const maxRange = document.getElementById("maxRange");
+
+    const minValue = document.getElementById("minValue");
+    const maxValue = document.getElementById("maxValue");
+
+    function formatRupiah(num) {
+    return "Rp " + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    minRange.addEventListener("input", () => {
+    minValue.textContent = formatRupiah(minRange.value);
+    });
+
+    maxRange.addEventListener("input", () => {
+    maxValue.textContent = formatRupiah(maxRange.value);
+    });
+</script>
+
+<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

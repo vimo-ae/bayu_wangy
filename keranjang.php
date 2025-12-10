@@ -1,7 +1,6 @@
 <?php
 session_start();
 require 'conn.php';
-echo "";
 
 function get_json_input() {
     $raw = file_get_contents('php://input');
@@ -13,19 +12,24 @@ function get_json_input() {
 $action = $_GET['action'] ?? null;
 if ($action) {
     header('Content-Type: application/json');
-    // PERBAIKAN 1: Ganti id_sesi() yang tidak dikenal menjadi session_id()
-    $id_sesi = session_id(); 
+    $id_user = $_SESSION['id_user'] ?? null;
+
+    if (!$id_user) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Akses ditolak. Anda harus login untuk mengakses keranjang.']);
+        exit;
+    }
 
     try {
         if ($action === 'get_cart') {
             $sql = "SELECT c.id_keranjang AS id_keranjang, p.id_produk AS id_produk, p.nama_produk AS name, p.harga AS price, p.gambar_produk AS image, c.jumlah AS qty
                    FROM item_keranjang c
                    JOIN produk p ON c.id_produk = p.id_produk
-                   WHERE c.id_sesi = ?
+                   WHERE c.id_user = ?
                    ORDER BY id_keranjang";
 
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 's', $id_sesi);
+            mysqli_stmt_bind_param($stmt, 'i', $id_user);
             mysqli_stmt_execute($stmt);
             $res = mysqli_stmt_get_result($stmt);
             $items = [];
@@ -36,7 +40,6 @@ if ($action) {
 
         if ($action === 'add') {
             $input = get_json_input();
-            // PERHATIKAN: Variabel yang dikirim dari JS adalah 'id_produk' dan 'qty'
             $id_produk = isset($input['id_produk']) ? (int)$input['id_produk'] : 0; 
             $jumlah_input = isset($input['qty']) ? (int)$input['qty'] : 1;
             
@@ -49,27 +52,23 @@ if ($action) {
                 exit;
             }
 
-            // (Opsional tapi direkomendasikan: Pengecekan produk ada di DB)
-            // ...
 
-            $sql = "SELECT id_keranjang FROM item_keranjang WHERE id_sesi = ? AND id_produk = ? LIMIT 1";
+            $sql = "SELECT id_keranjang FROM item_keranjang WHERE id_user = ? AND id_produk = ? LIMIT 1";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'si', $id_sesi, $id_produk);
+            mysqli_stmt_bind_param($stmt, 'ii', $id_user, $id_produk);
             mysqli_stmt_execute($stmt);
             $res = mysqli_stmt_get_result($stmt);
             $existing = mysqli_fetch_assoc($res);
 
             if ($existing) {
-                // PERBAIKAN 2: UPDATE jumlah berdasarkan $jumlah_input
                 $sql2 = "UPDATE item_keranjang SET jumlah = jumlah + ? WHERE id_keranjang = ?";
                 $stmt2 = mysqli_prepare($conn, $sql2);
                 mysqli_stmt_bind_param($stmt2, 'ii', $jumlah_input, $existing['id_keranjang']);
                 mysqli_stmt_execute($stmt2);
             } else {
-                // PERBAIKAN 2: INSERT jumlah berdasarkan $jumlah_input
-                $sql2 = "INSERT INTO item_keranjang (id_sesi, id_produk, jumlah) VALUES (?, ?, ?)";
+                $sql2 = "INSERT INTO item_keranjang (id_user, id_produk, jumlah) VALUES (?, ?, ?)";
                 $stmt2 = mysqli_prepare($conn, $sql2);
-                mysqli_stmt_bind_param($stmt2, 'sii', $id_sesi, $id_produk, $jumlah_input);
+                mysqli_stmt_bind_param($stmt2, 'iii', $id_user, $id_produk, $jumlah_input);
                 mysqli_stmt_execute($stmt2);
             }
 
@@ -77,7 +76,6 @@ if ($action) {
             exit;
         }
         
-        // Action 'update_jumlah' sudah benar menggunakan 'jumlah'
         if ($action === 'update_jumlah') {
             $input = get_json_input();
             $cart_id = isset($input['cart_id']) ? (int)$input['cart_id'] : 0;
@@ -87,9 +85,9 @@ if ($action) {
                 echo json_encode(['error' => 'Invalid input']);
                 exit;
             }
-            $sql = "UPDATE item_keranjang SET jumlah = ? WHERE id_keranjang = ? AND id_sesi = ?";
+            $sql = "UPDATE item_keranjang SET jumlah = ? WHERE id_keranjang = ? AND id_user = ?";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'iis', $jumlah, $cart_id, $id_sesi);
+            mysqli_stmt_bind_param($stmt, 'iis', $jumlah, $cart_id, $id_user);
             mysqli_stmt_execute($stmt);
             echo json_encode(['success' => true]);
             exit;
@@ -103,34 +101,37 @@ if ($action) {
                 echo json_encode(['error' => 'Invalid cart_id']);
                 exit;
             }
-            $sql = "DELETE FROM item_keranjang WHERE id_keranjang = ? AND id_sesi = ?";
+            $sql = "DELETE FROM item_keranjang WHERE id_keranjang = ? AND id_user = ?";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'is', $cart_id, $id_sesi);
+            mysqli_stmt_bind_param($stmt, 'ii', $cart_id, $id_user);
             mysqli_stmt_execute($stmt);
             echo json_encode(['success' => true]);
             exit;
         }
 
 if ($action === 'checkout') {
-            $input = get_json_input();
-            $id_sesi = session_id(); 
             
-            // Ambil Data Form Checkout
+  $input = get_json_input();
+
+    $id_user = $_SESSION['id_user'] ?? NULL; 
+
+    if (!$id_user) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Sesi login hilang saat checkout.']);
+        exit;
+    }
+            
             $nama_lengkap = $input['nama_lengkap'] ?? '';
             $email = $input['email'] ?? '';
             $no_telepon = $input['no_telepon'] ?? '';
-            // Data ini tidak dikirim dari form, dan tidak ada di tabel pesanan, jadi diabaikan di sini.
-            // $provinsi = $input['provinsi'] ?? '';
-            // $kota = $input['kota'] ?? '';
             $alamat_detail = $input['alamat_detail'] ?? ''; 
 
-            // 1. Ambil Item Keranjang & Hitung Total (Kode ini sudah benar)
             $sql = "SELECT p.id_produk, p.nama_produk, p.harga, c.jumlah 
                     FROM item_keranjang c
                     JOIN produk p ON c.id_produk = p.id_produk
-                    WHERE c.id_sesi = ?";
+                    WHERE c.id_user = ?";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 's', $id_sesi);
+            mysqli_stmt_bind_param($stmt, 'i', $id_user);
             mysqli_stmt_execute($stmt);
             $res = mysqli_stmt_get_result($stmt);
             $items = [];
@@ -146,48 +147,42 @@ if ($action === 'checkout') {
                 exit;
             }
             
-            // Tetapkan Biaya Ongkir (Statis: Rp20.000)
             $biaya_ongkir = 20000.00;
             $total_akhir = $total_produk + $biaya_ongkir;
 
-            // 2. Simpan ke Tabel Pesanan
-            // KOREKSI SQL: Hapus kolom 'provinsi', 'kota', dan 'biaya_ongkir' 
-            // agar sesuai dengan tabel `pesanan`
+
             $sql_order = "INSERT INTO pesanan 
-                          (id_sesi, nama_lengkap, email, no_telepon, alamat_detail, total_produk, total_akhir) 
-                          VALUES (?, ?, ?, ?, ?, ?, ?)";
+                          (id_user, nama_lengkap, email, no_telepon, alamat_detail, total_produk, total_akhir, status_pesanan) 
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                           
             $stmt_order = mysqli_prepare($conn, $sql_order);
             
-            // KOREKSI BINDING: Sesuaikan dengan 5 string dan 2 double (7 parameter)
-            // 'sssssdd' : id_sesi, nama_lengkap, email, no_telepon, alamat_detail, total_produk, total_akhir
-            mysqli_stmt_bind_param($stmt_order, 'sssssdd', 
-                $id_sesi, $nama_lengkap, $email, $no_telepon, $alamat_detail, $total_produk, $total_akhir);
+            $status_pesanan = 'Menunggu Pembayaran'; // Status awal pesanan
+            
+
+            mysqli_stmt_bind_param($stmt_order, 'issssdds', 
+                $id_user, $nama_lengkap, $email, $no_telepon, $alamat_detail, $total_produk, $total_akhir, $status_pesanan);
+                
             mysqli_stmt_execute($stmt_order);
             
-            // Pengecekan error SQL tambahan (opsional, tapi disarankan)
             if (mysqli_stmt_error($stmt_order)) {
-                throw new Exception("SQL Error during order insertion: " . mysqli_stmt_error($stmt_order));
             }
             
             $id_pesanan = mysqli_insert_id($conn);
 
-            // 3. Simpan ke Tabel DetailPesanan (Kode ini sudah benar)
             $sql_detail = "INSERT INTO detail_pesanan (id_pesanan, id_produk, nama_produk, harga_satuan, jumlah) 
                            VALUES (?, ?, ?, ?, ?)";
             $stmt_detail = mysqli_prepare($conn, $sql_detail);
             
             foreach ($items as $item) {
                 $harga_satuan = (double)$item['harga'];
-                // Binding menggunakan 'iidsi'
-                mysqli_stmt_bind_param($stmt_detail, 'iidsi', 
+                mysqli_stmt_bind_param($stmt_detail, 'iisdi', 
                     $id_pesanan, $item['id_produk'], $item['nama_produk'], $harga_satuan, $item['jumlah']);
                 mysqli_stmt_execute($stmt_detail);
             }
             
-            // 4. Kosongkan Keranjang (Kode ini sudah benar)
-            $del = mysqli_prepare($conn, "DELETE FROM item_keranjang WHERE id_sesi = ?");
-            mysqli_stmt_bind_param($del, 's', $id_sesi);
+            $del = mysqli_prepare($conn, "DELETE FROM item_keranjang WHERE id_user = ?");
+            mysqli_stmt_bind_param($del, 'i', $id_user);
             mysqli_stmt_execute($del);
 
             echo json_encode(['success' => true, 'order_id' => $id_pesanan, 'total' => $total_akhir]);
@@ -211,8 +206,10 @@ if ($action === 'checkout') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Keranjang</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="css/navbar.css"> 
     <link rel="stylesheet" href="css/styleee.css"> 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         .cart-item-img { width:60px; height:60px; object-fit:cover; }
         .cart-empty { min-height:200px; align-items:center; justify-content:center; display:flex; flex-direction:column; }
@@ -228,7 +225,10 @@ if ($action === 'checkout') {
                 <i class="bi bi-cart-x"></i>
                 <h1 class="cart-title">Keranjang Anda</h1>
                 <p class="cart-subtitle">Keranjang Anda saat ini kosong.</p>
-                <a href="katalog.php" class="btn cart-continue-btn">Lanjut Belanja</a>
+                <div class="d-flex justify-content-between gap-5">
+                  <a href="katalog.php" class="btn cart-continue-btn">Lanjut Belanja</a>
+                  <a href="riwayat.php" class="btn cart-back-btn">Riwayat Pesanan</a>
+                </div>
             </div>
 
             <div id="cart-has-items" class="row justify-content-center">
@@ -271,7 +271,7 @@ if ($action === 'checkout') {
      <?php include 'footer.php'; ?>
 
   <script src="bootstrap/js/bootstrap.js"></script>
-  <script>
+<script>
   function formatRupiah(angka) {
     return 'Rp' + angka.toLocaleString('id-ID');
   }
@@ -325,10 +325,9 @@ if ($action === 'checkout') {
 
       const tr = document.createElement('tr');
       tr.className = 'cart-item';
-      // PERHATIKAN: PHP mengembalikan id_keranjang, tapi JS menggunakan cart_id
       tr.dataset.cartId = item.id_keranjang; 
 
-tr.innerHTML = `
+  tr.innerHTML = `
         <td>
           <div class="d-flex align-items-center">
             <img src="${item.image ? escapeHtml(item.image) : 'images/home_parfum.png'}" class="cart-item-img me-3" alt="">
@@ -362,7 +361,6 @@ tr.innerHTML = `
         const row = this.closest('.cart-item');
         const cartId = row.dataset.cartId;
         try {
-                    // PERBAIKAN 1 & 2: Ganti action ke 'update_jumlah' dan key ke 'jumlah'
           await apiCall('update_jumlah', 'POST', { cart_id: cartId, jumlah: val });
           await loadCart();
         } catch (e) {
@@ -397,17 +395,14 @@ tr.innerHTML = `
     }
   }
 
-document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function () {
     loadCart();
 
-    // Logika untuk menampilkan alert setelah sukses checkout dari checkout.php
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('status') === 'success') {
       
-      // Tampilkan alert yang diminta
       alert('Pesanan Anda akan diproses, silahkan menunggu ^_^');
       
-      // Opsional: Bersihkan parameter dari URL agar alert tidak muncul saat refresh
       if (window.history.replaceState) {
         const cleanUrl = window.location.href.split('?')[0];
         window.history.replaceState(null, null, cleanUrl);
@@ -415,15 +410,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.getElementById('btn-checkout').addEventListener('click', function () {
-    // Alih-alih melakukan AJAX, tombol ini seharusnya hanya mengarahkan ke halaman Checkout
     window.location.href = 'checkout.php'; 
     });
   });
 
-    // Tambahkan parameter qty agar fungsi ini lebih berguna
   async function addToCart(productId, quantity = 1) { 
     try {
-            // Mengirim {id_produk: X, qty: Y}
       const res = await apiCall('add', 'POST', { id_produk: productId, qty: quantity });
       if (res.success) {
         alert('Produk ditambahkan ke keranjang');

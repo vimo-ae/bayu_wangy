@@ -1,0 +1,122 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif; 
+}
+
+body {
+    background: #000000; 
+    min-height: 100vh;
+    color: #ffffff;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    width: 550px;
+    height: 550px;
+    background: #D4AF3715;
+    filter: blur(130px);
+    top: -80px;
+    right: -50px;
+    z-index: -1;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #f2e9d8, #D4AF37, #f2e9d8);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+
+
+.sidebar {
+    min-height: 100vh;
+    background: #1a1a1a; 
+    padding-top: 30px;
+    border-right: 1px solid #333;
+}
+.sidebar a {
+    display: block;
+    padding: 15px 20px;
+    color: #e4e4e4;
+    text-decoration: none;
+    font-size: 15px;
+}
+.sidebar a:hover,
+.sidebar .active {
+    background: #2a2a2a;
+    color: #D4AF37; 
+}
+
+.btn-gold {
+    background: #D4AF37;
+    color: black;
+    font-weight: 600;
+}
+.btn-gold:hover {
+    background: #b5911b;
+    color: black;
+}
+
+.card {
+    background: #ffffff; 
+    color: #000;
+    border-radius: 12px;
+    border: 1px solid rgba(212,175,55,0.5); 
+    box-shadow: 0 4px 15px rgba(212,175,55,0.1); 
+}
+
+.table {
+    color: #000; 
+}
+
+.account-layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 40px auto;
+    border-radius: 15px;
+    overflow: hidden;
+    background: #1a1a1a; 
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.sidebar-menu {
+    flex: 0 0 250px;
+    background: #1a1a1a; 
+    padding: 30px 0;
+    border-right: 1px solid #333;
+}
+
+.content-area {
+    flex-grow: 1;
+    padding: 40px;
+    background: #000000; 
+}
+
+
+.sidebar-menu a {
+    display: block;
+    padding: 15px 20px;
+    color: #e4e4e4;
+    text-decoration: none;
+    font-size: 15px;
+}
+.sidebar-menu a:hover,
+.sidebar-menu .active {
+    background: #2a2a2a;
+    color: #D4AF37;
+}
+
+.card label, .card h4 {
+    color: #000 !important;
+}

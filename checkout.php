@@ -2,7 +2,24 @@
 session_start();
 require 'conn.php';
 
+$id_user = $_SESSION['id_user'] ?? null;
+$alamat_tersimpan = null;
 
+if ($id_user) {
+    $sql_user = "SELECT nama, email FROM users WHERE id_user = ?"; 
+    $stmt_user = $conn->prepare($sql_user);
+    $stmt_user->bind_param("i", $id_user);
+    $stmt_user->execute();
+    $result_user = $stmt_user->get_result();
+    $data_user = $result_user->fetch_assoc();
+
+    $sql_alamat = "SELECT nama, telepon, alamat, kota, provinsi, kode_pos FROM alamat WHERE id_user = ? LIMIT 1"; 
+    $stmt_alamat = $conn->prepare($sql_alamat);
+    $stmt_alamat->bind_param("i", $id_user);
+    $stmt_alamat->execute();
+    $result_alamat = $stmt_alamat->get_result();
+    $alamat_tersimpan = $result_alamat->fetch_assoc();
+}
 ?>
 
 <!DOCTYPE html>
@@ -11,161 +28,12 @@ require 'conn.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="css/checkout.css"> 
+    <link rel="stylesheet" href="css/navbar.css"> 
     <link rel="stylesheet" href="css/styleee.css"> 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <title>Checkout - Toko Parfum</title>
-    <style>
-        /* Styling untuk checkout.php agar sesuai dengan tema pesan.css (gelap & emas) */
-
-body {
-    /* Mengambil dari pesan.css: Latar Belakang Gelap dan Font Poppins */
-    font-family: 'Poppins', sans-serif;
-    background: #0D0D0D; 
-    color: #E8E8E8;
-    margin: 0;
-    padding: 0;
-}
-
-.checkout-container {
-    max-width: 900px;
-    margin: 40px auto;
-    /* Ubah background container menjadi gelap agar serasi */
-    background: #1A1A1A; /* Warna agak gelap untuk kontainer di atas #0D0D0D */
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); /* Shadow halus */
-}
-
-h2 {
-    /* Judul utama emas */
-    text-align: center;
-    margin-bottom: 30px;
-    color: #D4AF37; /* Emas */
-    font-weight: 700;
-}
-
-.checkout-section {
-    margin-bottom: 35px;
-}
-
-.checkout-section h3 {
-    margin-bottom: 15px;
-    border-bottom: 1px solid #333; /* Garis pemisah lebih gelap */
-    padding-bottom: 10px;
-    color: #E8E8E8;
-    font-weight: 600;
-    font-size: 20px;
-}
-
-/* --- Input Field Styling --- */
-.input-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 18px;
-}
-
-.input-group label {
-    font-size: 14px;
-    margin-bottom: 6px;
-    color: #B2B2B2; /* Warna teks label agak abu-abu */
-}
-
-.input-group input, 
-.input-group select, 
-.input-group textarea {
-    padding: 12px;
-    border: 1px solid #333;
-    border-radius: 8px;
-    background: #282828; /* Background input gelap */
-    color: #E8E8E8;
-    font-size: 16px;
-    transition: border-color 0.2s;
-}
-
-.input-group input:focus, 
-.input-group textarea:focus {
-    border-color: #D4AF37; /* Border emas saat fokus */
-    box-shadow: 0 0 0 1px #D4AF37;
-    outline: none;
-}
-
-/* Placeholder Styling */
-.input-group input::placeholder, 
-.input-group textarea::placeholder {
-    color: #777;
-}
-
-
-/* --- Ringkasan Pesanan (Order Summary) --- */
-.order-summary {
-    border: 1px solid #333;
-    padding: 20px;
-    border-radius: 10px;
-    background: #282828; /* Background summary lebih gelap dari container */
-    color: #E8E8E8;
-}
-
-.order-summary div {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 15px;
-}
-
-.order-summary hr {
-    border-top: 1px solid #333;
-    margin: 10px 0;
-}
-
-.order-summary div:last-child {
-    font-size: 18px;
-    font-weight: 700;
-    color: #D4AF37; /* Total harga emas */
-}
-
-
-/* --- Tombol Checkout --- */
-.btn-checkout {
-    width: 100%;
-    padding: 16px;
-    background: #D4AF37; /* Tombol Primer Emas dari pesan.css */
-    color: #000;
-    font-size: 18px;
-    font-weight: 700;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-    margin-top: 15px;
-}
-
-.btn-checkout:hover {
-    background: #b5911b; /* Efek hover emas */
-}
-
-.btn-checkout:disabled {
-    background: #555;
-    cursor: not-allowed;
-    color: #ccc;
-}
-
-
-/* --- Error Message Styling --- */
-.error-message {
-    color: #ff5555; /* Warna merah yang lebih serasi dengan tema gelap */
-    font-size: 12px;
-    margin-top: 6px;
-    display: none;
-}
-
-/* CSS untuk input yang invalid */
-.input-group input.is-invalid, 
-.input-group textarea.is-invalid {
-    border-color: #ff5555 !important; 
-    box-shadow: none;
-}
-
-    </style>
 </head>
 <body>
     <?php include 'navbar.php'; ?>
@@ -178,27 +46,26 @@ h2 {
         <h3>Informasi Pembeli</h3>
         <div class="input-group">
                 <label>Nama Lengkap</label>
-                <input type="text" id="nama_lengkap" placeholder="Masukkan nama anda">
+                <input id="nama_lengkap" type="text" name="nama_lengkap" value="<?= htmlspecialchars($data_user['nama'] ?? '') ?>" required>
                 <p class="error-message" id="error-nama_lengkap">Nama lengkap tidak boleh kosong.</p> 
         </div>
         <div class="input-group"> 
                 <label>Email</label>
-                <input type="email" id="email" placeholder="contoh@email.com">
+                <input id="email" type="email" name="email" value="<?= htmlspecialchars($data_user['email'] ?? '') ?>" required>
                 <p class="error-message" id="error-email">Email tidak boleh kosong.</p>
         </div>
         <div class="input-group">
                 <label>No Telepon</label>
-                <input type="text" id="no_telepon" placeholder="08xxxxxxxxxx">
+                <input id="no_telepon" type="text" name="no_telepon" value="<?= htmlspecialchars($alamat_tersimpan['telepon'] ?? '') ?>" required>
                 <p class="error-message" id="error-no_telepon">Nomor telepon tidak boleh kosong.</p>
         </div>
         <div class="input-group">
                 <label>Alamat Lengkap</label>
-                <textarea rows="3" id="alamat_detail" placeholder="Nama jalan, kecamatan, RT/RW"></textarea>
+                <textarea id="alamat_detail" name="alamat_detail" required><?= htmlspecialchars($alamat_tersimpan['alamat'] ?? '') ?></textarea>
                 <p class="error-message" id="error-alamat_detail">Alamat pengiriman tidak boleh kosong.</p>
         </div>
 </div>
 
-        <!-- Ringkasan Pesanan -->
         <div class="checkout-section">
             <h3>Ringkasan Pesanan</h3>
             <div class="order-summary">
@@ -211,234 +78,7 @@ h2 {
     </div>
     <?php include 'footer.php'; ?>
 
-<script>
-    // URL API yang mengarah ke keranjang.php
-    const API_URL = 'keranjang.php'; 
-    const ONGKIR = 20000; // Biaya Ongkir Statis
-
-    function formatRupiah(angka) {
-        return 'Rp' + (Math.round(angka)).toLocaleString('id-ID');
-    }
-
-    // Fungsi utilitas untuk melakukan panggilan API
-    async function apiCall(action, method = 'GET', body = null) {
-        const url = API_URL + '?action=' + encodeURIComponent(action);
-        const res = await fetch(url, {
-            method: method,
-            headers: { 'Content-Type': 'application/json' },
-            body: body ? JSON.stringify(body) : null
-        });
-        if (!res.ok) {
-            let errorText = await res.text();
-            throw new Error(`Error: ${res.status} ${res.statusText} - ${errorText}`);
-        }
-        return res.json();
-    }
-
-    // Mengambil data keranjang dan mengisi ringkasan pesanan
-    async function loadSummary() {
-        const summaryDiv = document.querySelector('.order-summary');
-        const btnBayar = document.getElementById('btn-bayar');
-        summaryDiv.innerHTML = '<p style="text-align: center;">Memuat ringkasan...</p>';
-
-        try {
-            const res = await apiCall('get_cart');
-            const items = res.items || [];
-            
-            summaryDiv.innerHTML = ''; // Kosongkan konten
-
-            let subtotalProduk = 0;
-
-            if (items.length === 0) {
-                summaryDiv.innerHTML = '<p style="text-align: center;">Keranjang kosong. Tidak dapat melanjutkan checkout.</p>';
-                btnBayar.disabled = true;
-                return;
-            }
-            
-            items.forEach(item => {
-                const price = parseFloat(item.price);
-                const qty = parseInt(item.qty);
-                const itemTotal = price * qty;
-                subtotalProduk += itemTotal;
-                
-                // Tambahkan detail produk
-                summaryDiv.innerHTML += `
-                    <div>
-                        <span>${item.name} (${qty}x)</span>
-                        <span>${formatRupiah(itemTotal)}</span>
-                    </div>
-                `;
-            });
-
-            const totalAkhir = subtotalProduk + ONGKIR;
-
-            // Tambahkan baris Ongkir dan Total
-            summaryDiv.innerHTML += `
-                <div>
-                    <span>Ongkir</span>
-                    <span>${formatRupiah(ONGKIR)}</span>
-                </div>
-                <hr>
-                <div style="font-weight: bold;">
-                    <span>Total</span>
-                    <span>${formatRupiah(totalAkhir)}</span>
-                </div>
-            `;
-            
-            btnBayar.disabled = false;
-
-        } catch (e) {
-            console.error('Gagal memuat ringkasan keranjang:', e);
-            summaryDiv.innerHTML = '<p style="color: red; text-align: center;">Gagal memuat data keranjang.</p>';
-            btnBayar.disabled = true;
-        }
-    }
-
-    // Mengambil semua data form yang saat ini ada di HTML
-    function collectFormData() {
-        return {
-            nama_lengkap: document.getElementById('nama_lengkap').value,
-            email: document.getElementById('email').value,
-            no_telepon: document.getElementById('no_telepon').value,
-            // ID 'provinsi' dan 'kota' dihapus karena tidak ada di HTML saat ini
-            alamat_detail: document.getElementById('alamat_detail').value
-        };
-    }
-    
-// Fungsi pembantu untuk mengecek apakah nilai hanya terdiri dari angka
-function isNumeric(value) {
-    // Regex: hanya boleh mengandung 0-9 dan panjangnya minimal 5 (untuk nomor telepon)
-    // Karakter + dan - tidak diperbolehkan, hanya angka.
-    const numericRegex = /^\d+$/; 
-    return numericRegex.test(value);
-}
-
-// Fungsi pembantu untuk mengecek format email yang valid
-    function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    function validateForm() {
-        const requiredIds = ['nama_lengkap', 'email', 'no_telepon', 'alamat_detail'];
-        let isValid = true;
-        let firstInvalidInput = null; 
-
-        // 1. Reset semua status validasi
-        requiredIds.forEach(id => {
-            const input = document.getElementById(id);
-            const errorMessage = document.getElementById('error-' + id);
-            
-            if (input) input.classList.remove('is-invalid');
-            if (errorMessage) errorMessage.style.display = 'none';
-        });
-
-        // 2. Cek satu per satu dan tandai error
-        requiredIds.forEach(id => {
-            const input = document.getElementById(id);
-            const value = input ? input.value.trim() : '';
-            const errorMessageElement = document.getElementById('error-' + id);
-            let errorMessageText = ''; 
-            
-            if (input) {
-                // Mendapatkan nama label untuk pesan error
-                const labelName = input.previousElementSibling.textContent.replace(':', '').trim();
-
-                // A. Validasi KOSONG
-                if (value === '') {
-                    errorMessageText = `${labelName} tidak boleh kosong.`;
-                } 
-                // B. Validasi FORMAT EMAIL
-                else if (id === 'email' && !isValidEmail(value)) {
-                    errorMessageText = 'Format email tidak valid (contoh: user@domain.com).';
-                }
-                // C. Validasi HANYA ANGKA (Nomor Telepon)
-                else if (id === 'no_telepon' && !isNumeric(value)) {
-                    errorMessageText = `${labelName} harus berupa angka (0-9) tanpa spasi atau tanda lain.`;
-                }
-                
-                if (errorMessageText !== '') {
-                    // Ada Error
-                    input.classList.add('is-invalid'); 
-                    if (errorMessageElement) {
-                        errorMessageElement.textContent = errorMessageText;
-                        errorMessageElement.style.display = 'block';
-                    }
-                    isValid = false;
-                    
-                    if (!firstInvalidInput) {
-                        firstInvalidInput = input;
-                    }
-                }
-            }
-        });
-
-        // 3. Scroll ke input error pertama
-        if (firstInvalidInput) {
-            firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            firstInvalidInput.focus(); 
-        }
-
-        return isValid;
-    }
-
-// Fungsi yang akan menjalankan proses checkout
-async function handleCheckout(event) {
-        event.preventDefault(); 
-        const btnBayar = document.getElementById('btn-bayar');
-
-        // 1. Validasi. Jika gagal, stop dan tampilkan error merah.
-        if (!validateForm()) {
-            return; 
-        }
-        
-        // 2. Reset Tampilan. Panggil validateForm() untuk menghilangkan garis merah.
-        // Tampilan masih belum terupdate di layar.
-        validateForm(); 
-
-        // 3. Tunda eksekusi (setTimeout)
-        // Ini memberikan waktu bagi browser untuk merender ulang tampilan (menghilangkan merah)
-        setTimeout(async () => {
-            
-            // 4. Konfirmasi (Tampilan input sekarang sudah bersih)
-            if (!confirm('Pastikan data sudah benar sebelum memproses pembayaran.')) {
-                return;
-            }
-
-            // 5. Ambil data dan Lanjutkan AJAX
-            const formData = collectFormData(); 
-            
-            try {
-                btnBayar.disabled = true;
-                btnBayar.textContent = 'Memproses...';
-                
-                const res = await apiCall('checkout', 'POST', formData);
-                
-                if (res.success) {
-                    console.log(`Pesanan Berhasil! ID: #${res.order_id}`);
-                    window.location.href = 'keranjang.php?status=success'; 
-                } else {
-                    console.error('Checkout gagal:', res.error);
-                    alert('Checkout gagal: Terjadi kesalahan saat menyimpan pesanan.');
-                }
-            } catch (e) {
-                console.error('Error saat proses checkout:', e);
-                alert('Terjadi kesalahan koneksi/server. Silakan coba lagi.');
-            } finally {
-                if (btnBayar.disabled) {
-                    btnBayar.disabled = false;
-                    btnBayar.textContent = 'Bayar Sekarang';
-                }
-            }
-        }, 0); // Delay nol (0) untuk memaksa pembaruan DOM
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-        loadSummary();
-        document.getElementById('btn-bayar').addEventListener('click', handleCheckout);
-});
-
-</script>
-
+    <script src="script/checkout.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

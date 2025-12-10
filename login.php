@@ -1,48 +1,57 @@
 <?php
-session_start(); 
-require 'conn.php'; // koneksi ke database
+session_start();
+require 'conn.php';
 
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
 
-    // Ambil data user dari database
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows === 0) {
-        $error = "Email Salah!";
+        $error = "Email tidak terdaftar!";
     } else {
         $user = $result->fetch_assoc();
-        if(!password_verify($password, $user['password'])) {
-            $error = "Password Salah!";
+        if (!password_verify($password, $user['password'])) {
+            $error = "Password salah!";
         } else {
-            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['id_user'] = $user['id_user'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['nama'] = $user['nama'];
-            header("Location: akun.php"); // redirect ke halaman akun
+            $_SESSION['role'] = $user['role'] ?? 'user';
+
+            if ($_SESSION['role'] === 'admin') {
+                header("Location: admin.php");
+            } else {
+                header("Location: akun.php");
+            }
             exit();
         }
-         
-    }    
+    }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Parfum Luxe</title>
-    <link rel="stylesheet" href="css/global.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="css/akun.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/styleee.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <?php include 'navbar.php'; ?>
 
     <div class="login-container">
 
@@ -81,7 +90,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     </div>
 
-<script src="script/login.js"></script>
+    <?php include 'footer.php'; ?>
 
+<script src="script/login.js"></script>
+<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

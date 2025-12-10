@@ -1,17 +1,14 @@
 <footer class="footer bg-white py-4">
     <div class="container text-dark">
 
-        <!-- Brand di tengah -->
         <div class="text-center">
             <a class="navbar-brand fw-bold" href="index.php">
                 Bayu Wangy
             </a>
         </div>
         
-        <!-- Dua kolom di tengah -->
         <div class="row justify-content-center text-left mt-3">
 
-            <!-- Kolom 1: Informasi Kontak -->
             <div class="col-md-3 offset-md-1 mb-3">
     <p class="mb-1">
         <i class="bi bi-geo-alt" style="font-size: 18px; color: #b5911b;"></i>
@@ -30,7 +27,6 @@
 </div>
 
 
-            <!-- Kolom 2: Sosial Media -->
             <div class="col-md-3 mb-3">
     <p class="mb-1">
         <i class="bi bi-instagram" style="font-size: 18px; color: #b5911b;"></i>

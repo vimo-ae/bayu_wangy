@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Hide/show password
-    const passwordInput = document.getElementById('password');
+    const passwordInput  = document.getElementById('password');
     const togglePassword = document.getElementById('togglePassword');
 
     if (passwordInput && togglePassword) {
