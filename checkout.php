@@ -41,7 +41,6 @@ if ($id_user) {
     <div class="checkout-container">
         <h2>Checkout</h2>
 
-        <!-- Informasi Pembeli -->
         <div class="checkout-section">
         <h3>Informasi Pembeli</h3>
         <div class="input-group">
