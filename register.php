@@ -61,6 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register | Parfum Luxe</title>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 <link rel="stylesheet" href="css/akun.css">
 <link rel="stylesheet" href="css/navbar.css">
 <link rel="stylesheet" href="css/styleee.css">
@@ -68,6 +69,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<?php include 'navbar.php'; ?>
 
 <div class="login-container">
     <h1 class="title">Daftar Akun</h1>
@@ -116,6 +119,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </p>
     </form>
 </div>
+
+<?php include 'footer.php'; ?>
 
 <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
